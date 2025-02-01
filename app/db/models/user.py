@@ -1,4 +1,5 @@
-import datetime
+from datetime import datetime
+from datetime import timezone
 
 from sqlalchemy import BigInteger
 from sqlalchemy import DateTime
@@ -17,6 +18,6 @@ class User(Base):
     email: Mapped[str] = mapped_column(String, nullable=False, unique=True)
     hashed_password: Mapped[str] = mapped_column(String, nullable=False)
     role: Mapped[str] = mapped_column(String, nullable=False)
-    created_at: Mapped[datetime.datetime] = mapped_column(DateTime, nullable=False, default=datetime.datetime.now())
+    created_at: Mapped[datetime] = mapped_column(DateTime, nullable=False, default=datetime.now(timezone.utc))
     # routes = relationship('Route', back_populates='user_id', cascade='all, delete-orphan')
     # favourites = relationship('Favourite', back_populates='user_id', cascade='all, delete-orphan')
