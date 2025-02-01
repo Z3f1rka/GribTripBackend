@@ -13,6 +13,7 @@ sys.path.append(os.path.join(sys.path[0], 'app'))
 from app.core.config import settings
 from app.db.database import Base
 from app.db.models.user import User
+from app.db.models.session import Session
 
 
 # this is the Alembic Config object, which provides
