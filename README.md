@@ -18,6 +18,7 @@ mkdir alembic/versions
 ```bash
 alembic revision --autogenerate
 ```
+
 ```bash
 alembic upgrade head
 ```
