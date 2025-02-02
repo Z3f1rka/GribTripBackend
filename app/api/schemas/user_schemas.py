@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pydantic import BaseModel
 from pydantic import EmailStr
 
@@ -30,4 +32,5 @@ class UserGetMeResponse(BaseModel):
     user_id: int
     name: str
     email: EmailStr
-    is_active: bool
+    role: str
+    created_at: datetime

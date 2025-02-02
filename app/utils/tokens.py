@@ -10,7 +10,7 @@ import jwt
 
 from app.core import settings
 
-secured = OAuth2PasswordBearer(tokenUrl='/api/docs/login')
+secured = OAuth2PasswordBearer(tokenUrl="/api/auth/docs/login")
 
 
 # Authentification
@@ -49,18 +49,21 @@ def get_jwt_payload(token: Annotated[str, Depends(secured)]) -> dict | str:
         raise HTTPException(401, "Invalid bearer token")
 
 
+# TODO: добавить токены в роль
 def create_token(type: str, user_id: int) -> str:
     if type == "access":
         return create_jwt(
-            {"type": "access_token",
-             "exp": datetime.now(timezone.utc) + timedelta(minutes=settings.ACCESS_TOKEN_LT),
-             "sub": str(user_id),
-             },
+            {
+                "type": "access_token",
+                "exp": datetime.now(timezone.utc) + timedelta(minutes=settings.ACCESS_TOKEN_LT),
+                "sub": str(user_id),
+            },
         )
     if type == "refresh":
         return create_jwt(
-            {"type": "jwt_refresh",
-             "exp": datetime.now(timezone.utc) + timedelta(minutes=settings.REFRESH_TOKEN_LT),
-             "sub": str(user_id),
-             },
+            {
+                "type": "jwt_refresh",
+                "exp": datetime.now(timezone.utc) + timedelta(minutes=settings.REFRESH_TOKEN_LT),
+                "sub": str(user_id),
+            },
         )

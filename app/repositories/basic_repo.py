@@ -46,7 +46,7 @@ class Repository(AbstractRepository):
         return res
 
     async def del_one(self, **filter_by):
-        stmt = delete(self.model).where(self.model.id == filter_by['id']).returning(self.model)
+        stmt = delete(self.model).where(self.model.id == filter_by["id"]).returning(self.model)
         res = await self.session.execute(stmt)
         res = res.scalar_one()
         return res
