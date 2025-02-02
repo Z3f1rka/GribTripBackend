@@ -6,6 +6,7 @@ from app.utils import verify_password
 from app.utils.unitofwork import IUnitOfWork
 
 
+# TODO: прикрутить роли к access токенам
 class UserService:
     def __init__(self, uow: IUnitOfWork):
         self.uow = uow

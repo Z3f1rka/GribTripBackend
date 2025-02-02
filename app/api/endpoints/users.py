@@ -2,6 +2,7 @@ from typing import Annotated
 
 from fastapi import APIRouter
 from fastapi import Depends
+from fastapi.params import Header
 from fastapi.security import OAuth2PasswordRequestForm
 
 from app.api.schemas import UserCreateParameters
@@ -21,6 +22,7 @@ async def get_user_service(uow: IUnitOfWork = Depends(UnitOfWork)) -> UserServic
     return UserService(uow)
 
 
+# TODO: собрать роли и добавить в jwt
 @router.post("/register")
 async def register(
     user: UserCreateParameters, user_service: UserService = Depends(get_user_service), # noqa
@@ -64,7 +66,7 @@ async def me(
 
 @router.get("/refresh")
 async def refresh(
-    jwt_refresh: Annotated[str, Depends(get_jwt_payload)], user_service: UserService = Depends(get_user_service), # noqa
+    jwt_refresh: Annotated[str, Header()], user_service: UserService = Depends(get_user_service), # noqa
 ) -> UserLogInResponse:
-    resp = await user_service.refresh(jwt_refresh)
+    resp = await user_service.refresh(get_jwt_payload(jwt_refresh))
     return UserLogInResponse(access_token=resp, refresh_token=jwt_refresh, token_type="bearer")
