@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     REFRESH_TOKEN_LT: int
     JWT_SECRET_KEY: str
     ENCRYPT_ALG: str
-    model_config = SettingsConfigDict(env_file='.env')
+    model_config = SettingsConfigDict(env_file=".env")
 
     @property
     def ASYNC_DATABASE_URL(self):
