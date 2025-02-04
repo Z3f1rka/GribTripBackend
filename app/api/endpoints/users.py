@@ -22,7 +22,6 @@ async def get_user_service(uow: IUnitOfWork = Depends(UnitOfWork)) -> UserServic
     return UserService(uow)
 
 
-# TODO: собрать роли и добавить в jwt
 @router.post("/register")
 async def register(
     user: UserCreateParameters, user_service: UserService = Depends(get_user_service), # noqa

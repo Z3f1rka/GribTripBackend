@@ -49,14 +49,14 @@ def get_jwt_payload(token: Annotated[str, Depends(secured)]) -> dict | str:
         raise HTTPException(401, "Invalid bearer token")
 
 
-# TODO: добавить роль в access токены
-def create_token(type: str, user_id: int) -> str:
+def create_token(type: str, user_id: int, role: str) -> str:
     if type == "access":
         return create_jwt(
             {
                 "type": "access_token",
                 "exp": datetime.now(timezone.utc) + timedelta(minutes=settings.ACCESS_TOKEN_LT),
                 "sub": str(user_id),
+                "role": role,
             },
         )
     if type == "refresh":
