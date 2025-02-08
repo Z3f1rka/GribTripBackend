@@ -19,6 +19,6 @@ class User(Base):
     hashed_password: Mapped[str] = mapped_column(String, nullable=False)
     role: Mapped[str] = mapped_column(String, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime, nullable=False, default=datetime.now())
+    avatar: Mapped[str] = mapped_column(String, nullable=True)
     sessions = relationship("Session", back_populates="user", cascade="all, delete-orphan")
-    # routes = relationship('Route', back_populates='user_id', cascade='all, delete-orphan')
-    # favourites = relationship('Favourite', back_populates='user_id', cascade='all, delete-orphan')
+    routes = relationship('Route', back_populates='user', cascade='all, delete-orphan')
