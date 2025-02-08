@@ -1,4 +1,4 @@
-# GribCSAT_Main
+# GribTripBackend
 ```bash
 python -m venv .venv
 ```
