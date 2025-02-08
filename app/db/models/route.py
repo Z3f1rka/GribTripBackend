@@ -26,7 +26,7 @@ class Route(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, nullable=True, default=datetime.now())
     rating: Mapped[int] = mapped_column(Integer, default=0, nullable=True)
     main_route_id: Mapped[int] = mapped_column(BigInteger, nullable=True)
-    version: Mapped[int] = mapped_column(Integer, nullable=False, default=True)
+    version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
     content_blocks: Mapped[dict] = mapped_column(JSON, nullable=True)
     user_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("users.id", ondelete="CASCADE"))
     user = relationship("User", back_populates="routes")
