@@ -1,10 +1,19 @@
 from datetime import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel  # noqa: F401
+from pydantic import ConfigDict
 
 
 class RouteCreateParameters(BaseModel):
     title: str
+
+
+class ContentBlocks(BaseModel):
+    text: str | None = None
+    title: str | None = None
+    position: int
+    geoposition: tuple[float, float]
+    images: list | None = None
 
 
 class RouteGetOne(BaseModel):
@@ -15,31 +24,29 @@ class RouteGetOne(BaseModel):
     photo: str | None = None
     created_at: datetime
     rating: int
-    main_route_id: int | None = None
     version: int
-    content_blocks: dict | None = None
 
 
 class RouteUpdateParameters(BaseModel):
     title: str
     description: str | None = None
     photo: str | None = None
-    content_blocks: dict | None = None
+    content_blocks: ContentBlocks | None = None
     route_id: int
 
 
-class RouteUpdateReturn(BaseModel):
+class RouteReturn(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id: int
     title: str
     description: str | None = None
+    approved_id: int
+    status: str
     photo: str | None = None
-    content_blocks: dict | None = None
+    created_at: datetime
+    rating: int
     main_route_id: int
+    version: int
     route_id: int
-
-
-class ContentBlocks(BaseModel):
-    text: str | None = None
-    title: str | None = None
-    position: int
-    geoposition: (float, float)
-    images: list | None = None
+    user_id: int
+    content_blocks: ContentBlocks | None = None
