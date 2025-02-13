@@ -1,11 +1,7 @@
 from datetime import datetime
 
-from pydantic import BaseModel  # noqa: F401
+from pydantic import BaseModel
 from pydantic import ConfigDict
-
-
-class RouteCreateParameters(BaseModel):
-    title: str
 
 
 class ContentBlocks(BaseModel):
@@ -16,37 +12,29 @@ class ContentBlocks(BaseModel):
     images: list | None = None
 
 
-class RouteGetOne(BaseModel):
-    route_id: int
-    title: str
-    description: str | None = None
-    status: str
-    photo: str | None = None
-    created_at: datetime
-    rating: int
-    version: int
-
-
-class RouteUpdateParameters(BaseModel):
+class Route(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
     title: str
     description: str | None = None
     photo: str | None = None
     content_blocks: ContentBlocks | None = None
-    route_id: int
 
 
-class RouteReturn(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-    id: int
+class RouteCreateParameters(BaseModel):
     title: str
-    description: str | None = None
+
+
+class RouteReturn(Route):
+    id: int
     approved_id: int
     status: str
-    photo: str | None = None
     created_at: datetime
     rating: int
     main_route_id: int
     version: int
     route_id: int
     user_id: int
-    content_blocks: ContentBlocks | None = None
+
+
+class RouteUpdateParameters(Route):
+    route_id: int
