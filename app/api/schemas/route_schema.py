@@ -25,14 +25,13 @@ class RouteCreateParameters(BaseModel):
 
 
 class RouteReturn(Route):
-    id: int
+    route_id: int
     approved_id: int
     status: str
     created_at: datetime
     rating: int
     main_route_id: int
     version: int
-    route_id: int
     user_id: int
 
 
