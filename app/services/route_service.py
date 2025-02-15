@@ -22,10 +22,10 @@ class RouteService:
 
     async def update(self, route: RouteUpdateParameters, user_id: int):
         async with self.uow:
-            db_route = await self.uow.routes.find_one(main_route_id=route.route_id)
+            db_route = await self.uow.routes.find_one(main_route_id=route.main_route_id) # TODO: сделать свой поиск, т.к. эта строчка багуется
             if db_route.user_id == user_id:
                 await self.uow.routes.update(title=route.title, description=route.description, photo=route.photo,
-                                             main_route_id=route.route_id, version=route.version,
+                                             main_route_id=route.main_route_id,
                                              content_blocks=route.content_blocks.model_dump())
                 await self.uow.commit()
             else:

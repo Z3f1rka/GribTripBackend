@@ -31,10 +31,8 @@ class RouteReturn(Route):
     created_at: datetime
     rating: int
     main_route_id: int
-    version: int
     user_id: int
 
 
 class RouteUpdateParameters(Route):
-    route_id: int
-    version: int
+    main_route_id: int

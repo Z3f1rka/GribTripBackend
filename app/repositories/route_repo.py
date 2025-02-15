@@ -16,11 +16,24 @@ class RouteRepository(Repository):
         await self.session.commit()
 
     # TODO: переписать всю функцию, невозможно добавить еще одну строчку таблицы, т.к. сюда нужно передавать все поля, а это бред
-    async def update(self, title: str, description: str, photo: str, main_route_id: int, version: int,
-                     content_blocks: dict):
-        stmt = select(Route).where(main_route_id=main_route_id).order_by(Route.version.desc())
+    async def update(self, title: str, main_route_id: int, description: str | None = None, photo: str | None = None,
+                     content_blocks: dict | None = None):
+        stmt = select(Route).where(Route.main_route_id == main_route_id).order_by(Route.version.desc())
         route = await self.session.execute(stmt)
         route = route.scalars().first()
+        version = route.version
+        if not description:
+            description = route.description
+        if not photo:
+            photo = route.photo
+        if not content_blocks:
+            content_blocks = route.content_blocks
         stmt = insert(Route).values(**{"title": title,
                                        "description": description,
-                                       "photo": photo})
+                                       "photo": photo,
+                                       "content_blocks": content_blocks,
+                                       "version": version + 1,
+                                       "main_route_id": main_route_id,
+                                       "user_id": route.user_id})
+        await self.session.execute(stmt)
+        await self.session.commit()
