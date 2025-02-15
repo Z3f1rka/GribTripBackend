@@ -30,7 +30,6 @@ class Repository(AbstractRepository):
 
     def __init__(self, session: AsyncSession):
         self.session = session
-        self.route = route
 
     async def add_one(self, data: dict):
         stmt = insert(self.model).values(**data).returning(self.model)
