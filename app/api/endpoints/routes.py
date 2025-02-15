@@ -4,7 +4,7 @@ from fastapi import APIRouter, status
 from fastapi import Depends
 
 from app.api.schemas import RouteCreateParameters
-from app.api.schemas import RouteReturn
+from app.api.schemas import RouteReturn, PrivateRoute
 from app.api.schemas import RouteUpdateParameters
 from app.services.route_service import RouteService
 from app.utils import get_jwt_payload
@@ -31,7 +31,7 @@ async def update(jwt_access: Annotated[str, Depends(get_jwt_payload)], route: Ro
     await service.update(route, int(jwt_access["sub"]))
 
 
-@router.get("/get_by_id")
-async def get(route_id: int, service: RouteService = Depends(get_route_service)) -> RouteReturn:
-    route = await service.get_route_by_id(route_id)
+@router.get("/get_by_id_private")
+async def get(route_id: int, jwt_access: Annotated[str, Depends(get_jwt_payload)], service: RouteService = Depends(get_route_service)) -> PrivateRoute:
+    route = await service.get_route_by_id(route_id, user_id=int(jwt_access["sub"]))
     return route

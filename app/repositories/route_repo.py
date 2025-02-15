@@ -1,3 +1,5 @@
+import json
+
 from sqlalchemy import update, insert, select
 
 from app.db.models import Route
@@ -15,9 +17,8 @@ class RouteRepository(Repository):
         await self.session.execute(stmt)
         await self.session.commit()
 
-    # TODO: переписать всю функцию, невозможно добавить еще одну строчку таблицы, т.к. сюда нужно передавать все поля, а это бред
     async def update(self, title: str, main_route_id: int, description: str | None = None, photo: str | None = None,
-                     content_blocks: dict | None = None):
+                     content_blocks: list | None = None):
         stmt = select(Route).where(Route.main_route_id == main_route_id).order_by(Route.version.desc())
         route = await self.session.execute(stmt)
         route = route.scalars().first()
@@ -37,3 +38,15 @@ class RouteRepository(Repository):
                                        "user_id": route.user_id})
         await self.session.execute(stmt)
         await self.session.commit()
+
+    async def find_by_main_route_id_private(self, main_route_id: int):
+        stmt = select(Route).where(Route.main_route_id == main_route_id).order_by(Route.version.desc())
+        route = await self.session.execute(stmt)
+        route = route.scalars().all()
+        return route
+
+    async def find_by_main_route_id_public(self, main_route_id: int):
+        stmt = select(Route).where(Route.main_route_id == main_route_id, Route.status == "public").order_by(Route.version.desc())
+        route = await self.session.execute(stmt)
+        route = route.scalars().first()
+        return route
