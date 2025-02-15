@@ -32,6 +32,6 @@ async def update(jwt_access: Annotated[str, Depends(get_jwt_payload)], route: Ro
 
 
 @router.get("/get_by_id_private")
-async def get(route_id: int, jwt_access: Annotated[str, Depends(get_jwt_payload)], service: RouteService = Depends(get_route_service)) -> PrivateRoute:
+async def get(route_id: int, jwt_access: Annotated[str, Depends(get_jwt_payload)], service: RouteService = Depends(get_route_service)):
     route = await service.get_route_by_id(route_id, user_id=int(jwt_access["sub"]))
     return route

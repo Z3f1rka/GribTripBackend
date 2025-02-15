@@ -29,7 +29,10 @@ class RouteService:
             db_route = await self.uow.routes.find_by_main_route_id_private(route.main_route_id)
             db_route = db_route[-1]
             if db_route.user_id == user_id:
-                content_blocks = [i.model_dump() for i in route.content_blocks]
+                if db_route.content_blocks:
+                    content_blocks = [i.model_dump() for i in db_route.content_blocks]
+                else:
+                    content_blocks = []
                 await self.uow.routes.update(title=route.title, description=route.description, photo=route.photo,
                                              main_route_id=route.main_route_id,
                                              content_blocks=content_blocks)
