@@ -25,8 +25,8 @@ class RouteCreateParameters(BaseModel):
 
 
 class RouteReturn(Route):
-    route_id: int
-    approved_id: int
+    model_config = ConfigDict(from_attributes=True)
+    approved_id: int | None = None
     status: str
     created_at: datetime
     rating: int
@@ -37,3 +37,4 @@ class RouteReturn(Route):
 
 class RouteUpdateParameters(Route):
     route_id: int
+    version: int
