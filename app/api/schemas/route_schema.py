@@ -20,12 +20,14 @@ class Route(BaseModel):
     title: str
     description: str | None = None
     photo: str | None = None
-    content_blocks:  list[ContentBlocks | None] | None = None
+    content_blocks:  list[ContentBlocks] | None = []
 
-    @field_validator('content_blocks', mode='before')
+    """@field_validator('content_blocks', mode='before')
     def check(cls, content_blocks):
+        print(content_blocks)
         if not content_blocks:
-            return [{'position': 1, 'geoposition': (0.0, 0.0)}]
+            content_blocks = [{'position': 1, 'geoposition': (0.0, 0.0)}]
+            return"""
 
 
 class RouteCreateParameters(BaseModel):
@@ -40,10 +42,11 @@ class RouteReturn(Route):
     rating: int
     main_route_id: int
     user_id: int
+    version: int
 
 
 class RouteUpdateParameters(Route):
     main_route_id: int
 
-class PrivateRoute(BaseModel):
-    versions: List[RouteReturn]
+class PrivateRouteReturn(RouteReturn):
+    version: int
