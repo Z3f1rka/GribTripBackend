@@ -19,10 +19,12 @@ class RouteService:
                 else:
                     raise HTTPException(403, "Пользователь не является владельцем маршрута")
             return []
-    
-    async def get_public_route_by_id(self, id: int, user_id: int):
+
+    async def get_public_route_by_id(self, id: int):
         async with self.uow:
             route = await self.uow.routes.find_by_main_route_id_public(id)
+            if not route:
+                raise HTTPException(404, "Публичных маршрутов с этим id не существует")
             route = RouteReturn.model_validate(route)
             return route
 
