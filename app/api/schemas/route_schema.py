@@ -1,9 +1,8 @@
 from datetime import datetime
-from typing import List, Optional
-
+from typing import Optional
 
 from pydantic import BaseModel
-from pydantic import ConfigDict, field_validator
+from pydantic import ConfigDict
 
 
 class ContentBlocks(BaseModel):
@@ -14,13 +13,14 @@ class ContentBlocks(BaseModel):
     geoposition: tuple[float, float]
     images: list | None = None
 
+
 # TODO: починить
 class Route(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     title: str
     description: str | None = None
     photo: str | None = None
-    content_blocks:  list[ContentBlocks] | None = []
+    content_blocks: list[ContentBlocks] | None = []
 
     """@field_validator('content_blocks', mode='before')
     def check(cls, content_blocks):
@@ -47,6 +47,7 @@ class RouteReturn(Route):
 
 class RouteUpdateParameters(Route):
     main_route_id: int
+
 
 class PrivateRouteReturn(RouteReturn):
     version: int

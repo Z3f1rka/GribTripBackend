@@ -1,14 +1,14 @@
-from typing import List
 from datetime import datetime
+from typing import List
 
 from sqlalchemy import BigInteger
 from sqlalchemy import DateTime
 from sqlalchemy import ForeignKey
 from sqlalchemy import Integer
 from sqlalchemy import JSON
-from sqlalchemy.dialects import postgresql
 from sqlalchemy import String
 from sqlalchemy import Text
+from sqlalchemy.dialects import postgresql
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship  # noqa

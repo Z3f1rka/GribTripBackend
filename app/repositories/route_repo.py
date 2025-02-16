@@ -1,6 +1,6 @@
-import json
-
-from sqlalchemy import update, insert, select
+from sqlalchemy import insert
+from sqlalchemy import select
+from sqlalchemy import update
 
 from app.db.models import Route
 from app.repositories.basic_repo import Repository
@@ -46,7 +46,8 @@ class RouteRepository(Repository):
         return route
 
     async def find_by_main_route_id_public(self, main_route_id: int):
-        stmt = select(Route).where(Route.main_route_id == main_route_id, Route.status == "public").order_by(Route.version.desc())
+        stmt = select(Route).where(Route.main_route_id == main_route_id, Route.status == "public").order_by(
+            Route.version.desc())
         route = await self.session.execute(stmt)
         route = route.scalars().first()
         return route
