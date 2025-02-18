@@ -10,7 +10,7 @@ import jwt
 
 from app.core import settings
 
-secured = OAuth2PasswordBearer(tokenUrl="/api/auth/docs/login")
+secured = OAuth2PasswordBearer(tokenUrl="/auth/docs/login")
 
 
 # Authentification

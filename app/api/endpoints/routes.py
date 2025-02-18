@@ -13,7 +13,7 @@ from app.utils import get_jwt_payload
 from app.utils import IUnitOfWork
 from app.utils import UnitOfWork
 
-router = APIRouter(tags=["Working with map routes"], prefix="/api/routes")
+router = APIRouter(tags=["Working with map routes"], prefix="/routes")
 
 
 async def get_route_service(uow: IUnitOfWork = Depends(UnitOfWork)) -> RouteService:  # noqa
