@@ -36,3 +36,4 @@ class UserGetMeResponse(BaseModel):
     email: EmailStr
     role: str
     created_at: datetime
+    avatar: str | None = None
