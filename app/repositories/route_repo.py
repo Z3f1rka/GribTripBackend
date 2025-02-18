@@ -51,14 +51,15 @@ class RouteRepository(Repository):
         route = await self.session.execute(stmt)
         route = route.scalars().first()
         return route
-    
+
     async def find_all_public_routes(self):
         stmt = select(Route.main_route_id).group_by(Route.main_route_id)
         main_route_id = await self.session.execute(stmt)
         main_route_id = main_route_id.scalars().all()
         routes = []
         for id in main_route_id:
-            stmt = select(Route).where(Route.main_route_id == id, Route.status == "public").order_by(Route.version.desc())
+            stmt = select(Route).where(Route.main_route_id == id, Route.status == "public").order_by(
+                Route.version.desc())
             route = await self.session.execute(stmt)
             route = route.scalars().first()
             routes.append(route)
