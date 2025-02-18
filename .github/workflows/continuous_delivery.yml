@@ -15,6 +15,7 @@ jobs:
         run: |
           git config --global user.name "CD Bot" && \
           git config --global user.email "${{ secrets.EMAIL_FOR_PUSH }}" && \
+          cd GribTrip && \
           git submodule update --remote --merge && \
           git add . && \
           git commit -m "Backend update" && \
