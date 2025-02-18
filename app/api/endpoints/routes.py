@@ -5,7 +5,7 @@ from fastapi import Depends
 from fastapi import status
 
 from app.api.schemas import RouteCreateParameters
-from app.api.schemas import RouteReturn
+from app.api.schemas import RouteReturn, AllRouteReturn
 from app.api.schemas import RouteUpdateParameters
 from app.services.route_service import RouteService
 from app.utils import get_jwt_payload
@@ -43,3 +43,9 @@ async def get_private(route_id: int, jwt_access: Annotated[str, Depends(get_jwt_
 async def get_public(route_id: int, service: RouteService = Depends(get_route_service)) -> RouteReturn: # noqa
     route = await service.get_public_route_by_id(route_id)
     return route
+
+
+@router.get('/all_routes')
+async def get_all_routes(service: RouteService = Depends(get_route_service)) -> list[AllRouteReturn]:
+    routes = await service.get_all_routes()
+    return routes

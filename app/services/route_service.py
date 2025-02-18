@@ -1,6 +1,6 @@
 from fastapi import HTTPException
 
-from app.api.schemas.route_schema import RouteReturn
+from app.api.schemas.route_schema import RouteReturn, AllRouteReturn
 from app.api.schemas.route_schema import RouteUpdateParameters
 from app.utils.unitofwork import IUnitOfWork
 
@@ -51,3 +51,8 @@ class RouteService:
                 await self.uow.commit()
             else:
                 raise HTTPException(403, "Пользователь не является владельцем маршрута")
+            
+    async def get_all_routes(self):
+        async with self.uow:
+            routes = await self.uow.routes.find_all_public_routes()
+            return [AllRouteReturn.model_validate(i) for i in routes]

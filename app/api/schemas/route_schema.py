@@ -51,3 +51,11 @@ class RouteUpdateParameters(Route):
 
 class PrivateRouteReturn(RouteReturn):
     version: int
+
+
+class AllRouteReturn(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    title: str
+    description: str | None = None
+    photo: str | None = None
+    main_route_id: int
