@@ -15,7 +15,7 @@ from app.utils import get_jwt_payload
 from app.utils import IUnitOfWork
 from app.utils import UnitOfWork
 
-router = APIRouter(tags=["Working with users"], prefix="/api/auth")
+router = APIRouter(tags=["Working with users"], prefix="/auth")
 
 
 async def get_user_service(uow: IUnitOfWork = Depends(UnitOfWork)) -> UserService:  # noqa
