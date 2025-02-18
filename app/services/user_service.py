@@ -35,13 +35,7 @@ class UserService:
         if isinstance(token, dict):
             async with self.uow:
                 user = await self.uow.users.find_one(id=int(token["sub"]))
-                user = UserGetMeResponse(
-                    user_id=user.id,
-                    name=user.username,
-                    email=user.email,
-                    role=user.role,
-                    created_at=user.created_at,
-                )
+                user = UserGetMeResponse.model_validate(user)
             return user
         else:
             raise HTTPException(400, "Не валидный токен")

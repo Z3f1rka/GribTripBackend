@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import List
 
 from sqlalchemy import BigInteger
 from sqlalchemy import DateTime
@@ -7,6 +8,7 @@ from sqlalchemy import Integer
 from sqlalchemy import JSON
 from sqlalchemy import String
 from sqlalchemy import Text
+from sqlalchemy.dialects import postgresql
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship  # noqa
@@ -27,6 +29,6 @@ class Route(Base):
     rating: Mapped[int] = mapped_column(Integer, default=0, nullable=True)
     main_route_id: Mapped[int] = mapped_column(BigInteger, nullable=True)
     version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
-    content_blocks: Mapped[dict] = mapped_column(JSON, nullable=True)
+    content_blocks: Mapped[List[dict]] = mapped_column(postgresql.ARRAY(JSON), nullable=True)
     user_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("users.id", ondelete="CASCADE"))
     user = relationship("User", back_populates="routes")

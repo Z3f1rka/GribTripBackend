@@ -2,6 +2,7 @@ from abc import ABC
 from abc import abstractmethod
 
 from app.db.database import async_session_maker
+from app.repositories import RouteRepository
 from app.repositories import SessionRepository
 from app.repositories import UserRepository
 
@@ -9,6 +10,7 @@ from app.repositories import UserRepository
 class IUnitOfWork(ABC):
     users: UserRepository
     sessions: SessionRepository
+    routes: RouteRepository
 
     @abstractmethod
     def __init__(self):
@@ -40,6 +42,7 @@ class UnitOfWork(IUnitOfWork):
 
         self.users = UserRepository(self.session)
         self.sessions = SessionRepository(self.session)
+        self.routes = RouteRepository(self.session)
 
     async def __aexit__(self, *args):
         await self.rollback()
