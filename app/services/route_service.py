@@ -2,7 +2,8 @@ from fastapi import HTTPException
 
 from app.api.schemas.route_schema import AllRouteReturn
 from app.api.schemas.route_schema import RouteReturn
-from app.api.schemas.route_schema import RouteUpdateParameters, RouteReturnNoContentBlocks
+from app.api.schemas.route_schema import RouteReturnNoContentBlocks
+from app.api.schemas.route_schema import RouteUpdateParameters
 from app.utils.unitofwork import IUnitOfWork
 
 

@@ -7,7 +7,8 @@ from fastapi import status
 from app.api.schemas import AllRouteReturn
 from app.api.schemas import RouteCreateParameters
 from app.api.schemas import RouteReturn
-from app.api.schemas import RouteUpdateParameters, RouteReturnNoContentBlocks
+from app.api.schemas import RouteReturnNoContentBlocks
+from app.api.schemas import RouteUpdateParameters
 from app.services.route_service import RouteService
 from app.utils import get_jwt_payload
 from app.utils import IUnitOfWork
