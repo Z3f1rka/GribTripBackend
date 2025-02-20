@@ -58,7 +58,7 @@ class RouteService:
         async with self.uow:
             routes = await self.uow.routes.find_all_public_routes()
             return [AllRouteReturn.model_validate(i) for i in routes]
-        
+
     async def get_all_user_routes(self, user_id: int, user: int):
         async with self.uow:
             if user_id != user:

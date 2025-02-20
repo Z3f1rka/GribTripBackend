@@ -65,7 +65,7 @@ class RouteRepository(Repository):
             if route:
                 routes.append(route)
         return routes
-    
+
     async def find_all_user_routes(self, user_id):
         stmt = select(Route.main_route_id).where(Route.user_id == user_id).group_by(Route.main_route_id)
         main_route_id = await self.session.execute(stmt)

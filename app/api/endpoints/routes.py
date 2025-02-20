@@ -54,6 +54,7 @@ async def get_all_routes(service: RouteService = Depends(get_route_service)) -> 
 
 
 @router.get('/all_user_routes')
-async def get_all_user_routes(user_id: int, jwt_access: Annotated[str, Depends(get_jwt_payload)], service: RouteService = Depends(get_route_service)) -> list[RouteReturnNoContentBlocks]:
+async def get_all_user_routes(user_id: int, jwt_access: Annotated[str, Depends(get_jwt_payload)],
+                              service: RouteService = Depends(get_route_service)) -> list[RouteReturnNoContentBlocks]: # noqa
     routes = await service.get_all_user_routes(user_id=user_id, user=int(jwt_access["sub"]))
     return routes
