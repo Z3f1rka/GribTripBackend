@@ -62,6 +62,7 @@ class AllRouteReturn(BaseModel):
 
 
 class RouteReturnNoContentBlocks(AllRouteReturn):
+    user_id: int
     approved_id: int | None = None
     status: str
     created_at: datetime

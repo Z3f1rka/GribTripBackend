@@ -65,3 +65,8 @@ class RouteService:
                 raise HTTPException(403, "Пользователь не является владельцем маршрутов")
             routes = await self.uow.routes.find_all_user_routes(user_id)
             return [RouteReturnNoContentBlocks.model_validate(i) for i in routes]
+
+    async def get_all_user_public_routes(self, user_id: int):
+        async with self.uow:
+            routes = await self.uow.routes.find_all_user_public_routes(user_id)
+            return [RouteReturnNoContentBlocks.model_validate(i) for i in routes]

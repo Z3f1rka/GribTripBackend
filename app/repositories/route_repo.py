@@ -77,3 +77,11 @@ class RouteRepository(Repository):
             route = route.scalars().first()
             routes.append(route)
         return routes
+
+    async def find_all_user_public_routes(self, user_id):
+        routes = await self.find_all_user_routes(user_id)
+        for_return = []
+        for route in routes:
+            if route.status == 'public':
+                for_return.append(route)
+        return for_return
