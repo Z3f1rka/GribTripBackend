@@ -7,7 +7,7 @@ from fastapi import status
 from app.api.schemas import AllRouteReturn
 from app.api.schemas import RouteCreateParameters
 from app.api.schemas import RouteReturn
-from app.api.schemas import RouteUpdateParameters
+from app.api.schemas import RouteUpdateParameters, RouteReturnNoContentBlocks
 from app.services.route_service import RouteService
 from app.utils import get_jwt_payload
 from app.utils import IUnitOfWork
@@ -53,6 +53,6 @@ async def get_all_routes(service: RouteService = Depends(get_route_service)) -> 
 
 
 @router.get('/all_user_routes')
-async def get_all_user_routes(user_id: int, service: RouteService = Depends(get_route_service)) -> list[RouteReturn]:
+async def get_all_user_routes(user_id: int, service: RouteService = Depends(get_route_service)) -> list[RouteReturnNoContentBlocks]:
     routes = await service.get_all_user_routes(user_id)
     return routes

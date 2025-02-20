@@ -2,7 +2,7 @@ from fastapi import HTTPException
 
 from app.api.schemas.route_schema import AllRouteReturn
 from app.api.schemas.route_schema import RouteReturn
-from app.api.schemas.route_schema import RouteUpdateParameters
+from app.api.schemas.route_schema import RouteUpdateParameters, RouteReturnNoContentBlocks
 from app.utils.unitofwork import IUnitOfWork
 
 
@@ -61,4 +61,4 @@ class RouteService:
     async def get_all_user_routes(self, user_id: int):
         async with self.uow:
             routes = await self.uow.routes.find_all_user_routes(user_id)
-            return [RouteReturn.model_validate(i) for i in routes]
+            return [RouteReturnNoContentBlocks.model_validate(i) for i in routes]
