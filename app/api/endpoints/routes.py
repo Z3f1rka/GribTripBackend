@@ -46,7 +46,13 @@ async def get_public(route_id: int, service: RouteService = Depends(get_route_se
     return route
 
 
-@router.get('/all_routes')
+@router.get('/all_public_routes')
 async def get_all_routes(service: RouteService = Depends(get_route_service)) -> list[AllRouteReturn]:  # noqa
-    routes = await service.get_all_routes()
+    routes = await service.get_all_public_routes()
+    return routes
+
+
+@router.get('/all_user_routes')
+async def get_all_user_routes(user_id: int, service: RouteService = Depends(get_route_service)) -> list[RouteReturn]:
+    routes = await service.get_all_user_routes(user_id)
     return routes

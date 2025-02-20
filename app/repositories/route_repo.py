@@ -62,5 +62,18 @@ class RouteRepository(Repository):
                 Route.version.desc())
             route = await self.session.execute(stmt)
             route = route.scalars().first()
+            if route:
+                routes.append(route)
+        return routes
+    
+    async def find_all_user_routes(self, user_id):
+        stmt = select(Route.main_route_id).where(Route.user_id == user_id).group_by(Route.main_route_id)
+        main_route_id = await self.session.execute(stmt)
+        main_route_id = main_route_id.scalars().all()
+        routes = []
+        for id in main_route_id:
+            stmt = select(Route).where(Route.main_route_id == id).order_by(Route.version.desc())
+            route = await self.session.execute(stmt)
+            route = route.scalars().first()
             routes.append(route)
         return routes
