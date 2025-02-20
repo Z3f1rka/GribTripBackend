@@ -59,3 +59,12 @@ class AllRouteReturn(BaseModel):
     description: str | None = None
     photo: str | None = None
     main_route_id: int
+
+
+class RouteReturnNoContentBlocks(AllRouteReturn):
+    user_id: int
+    approved_id: int | None = None
+    status: str
+    created_at: datetime
+    rating: int
+    version: int

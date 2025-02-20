@@ -2,6 +2,7 @@ from fastapi import HTTPException
 
 from app.api.schemas.route_schema import AllRouteReturn
 from app.api.schemas.route_schema import RouteReturn
+from app.api.schemas.route_schema import RouteReturnNoContentBlocks
 from app.api.schemas.route_schema import RouteUpdateParameters
 from app.utils.unitofwork import IUnitOfWork
 
@@ -53,7 +54,19 @@ class RouteService:
             else:
                 raise HTTPException(403, "Пользователь не является владельцем маршрута")
 
-    async def get_all_routes(self):
+    async def get_all_public_routes(self):
         async with self.uow:
             routes = await self.uow.routes.find_all_public_routes()
             return [AllRouteReturn.model_validate(i) for i in routes]
+
+    async def get_all_user_routes(self, user_id: int, user: int):
+        async with self.uow:
+            if user_id != user:
+                raise HTTPException(403, "Пользователь не является владельцем маршрутов")
+            routes = await self.uow.routes.find_all_user_routes(user_id)
+            return [RouteReturnNoContentBlocks.model_validate(i) for i in routes]
+
+    async def get_all_user_public_routes(self, user_id: int):
+        async with self.uow:
+            routes = await self.uow.routes.find_all_user_public_routes(user_id)
+            return [RouteReturnNoContentBlocks.model_validate(i) for i in routes]
