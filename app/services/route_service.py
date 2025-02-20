@@ -40,6 +40,8 @@ class RouteService:
             db_route = await self.uow.routes.find_by_main_route_id_private(route.main_route_id)
             db_route = db_route[0]
             if db_route.user_id == user_id:
+                if db_route.status == "check":
+                    raise HTTPException(400, "Маршрут находится на проверке")
                 if not route.content_blocks:
                     if db_route.content_blocks:
                         content_blocks = [i.model_dump() for i in db_route.content_blocks]
@@ -70,3 +72,15 @@ class RouteService:
         async with self.uow:
             routes = await self.uow.routes.find_all_user_public_routes(user_id)
             return [RouteReturnNoContentBlocks.model_validate(i) for i in routes]
+
+    async def publication_request(self, main_route_id: int, user_id: int):
+        async with self.uow:
+            db_route = await self.uow.routes.find_by_main_route_id_private(main_route_id)
+            db_route = db_route[0]
+            if db_route.user_id == user_id:
+                if db_route.status == "check":
+                    raise HTTPException(400, "Маршрут уже находится на проверке")
+                await self.uow.routes.change_status(main_route_id, "check")
+                await self.uow.commit()
+            else:
+                raise HTTPException(403, "Пользователь не является владельцем маршрута")

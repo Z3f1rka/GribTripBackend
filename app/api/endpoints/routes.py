@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Query
 from fastapi import Depends
 from fastapi import status
 
@@ -64,3 +64,9 @@ async def get_all_user_routes(user_id: int, jwt_access: Annotated[str, Depends(g
 async def get_all_user_public_routes(user_id: int, service: RouteService = Depends(get_route_service)) -> list[RouteReturnNoContentBlocks]: # noqa
     routes = await service.get_all_user_public_routes(user_id)
     return routes
+
+@router.post("/publication_request/", status_code=status.HTTP_200_OK)
+async def publication_request(jwt_access: Annotated[str, Depends(get_jwt_payload)], route_id: Annotated[int, Query()],
+                              service: RouteService = Depends(get_route_service)):
+    """В качестве route_id передавать main_route_id"""
+    await service.publication_request(route_id, int(jwt_access["sub"]))

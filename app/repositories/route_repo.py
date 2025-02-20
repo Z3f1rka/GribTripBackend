@@ -10,16 +10,16 @@ class RouteRepository(Repository):
     model = Route
 
     async def add_route(self, user_id: int, title: str):
-        stmt = insert(Route).values(**{"user_id": user_id, "title": title}).returning(Route)
+        stmt = insert(self.model).values(**{"user_id": user_id, "title": title}).returning(self.model)
         route = await self.session.execute(stmt)
         route_id = route.scalar_one().id
-        stmt = update(Route).where(Route.id == route_id).values(main_route_id=route_id)
+        stmt = update(self.model).where(self.model.id == route_id).values(main_route_id=route_id)
         await self.session.execute(stmt)
         await self.session.commit()
 
     async def update(self, title: str, main_route_id: int, description: str | None = None, photo: str | None = None,
                      content_blocks: list | None = None):
-        stmt = select(Route).where(Route.main_route_id == main_route_id).order_by(Route.version.desc())
+        stmt = select(self.model).where(self.model.main_route_id == main_route_id).order_by(self.model.version.desc())
         route = await self.session.execute(stmt)
         route = route.scalars().first()
         version = route.version
@@ -29,37 +29,38 @@ class RouteRepository(Repository):
             photo = route.photo
         if not content_blocks:
             content_blocks = route.content_blocks
-        stmt = insert(Route).values(**{"title": title,
-                                       "description": description,
-                                       "photo": photo,
-                                       "content_blocks": content_blocks,
-                                       "version": version + 1,
-                                       "main_route_id": main_route_id,
-                                       "user_id": route.user_id})
+        stmt = insert(self.model).values(**{"title": title,
+                                            "description": description,
+                                            "photo": photo,
+                                            "content_blocks": content_blocks,
+                                            "version": version + 1,
+                                            "main_route_id": main_route_id,
+                                            "user_id": route.user_id})
         await self.session.execute(stmt)
         await self.session.commit()
 
     async def find_by_main_route_id_private(self, main_route_id: int):
-        stmt = select(Route).where(Route.main_route_id == main_route_id).order_by(Route.version.desc())
+        stmt = select(self.model).where(self.model.main_route_id == main_route_id).order_by(self.model.version.desc())
         route = await self.session.execute(stmt)
         route = route.scalars().all()
         return route
 
     async def find_by_main_route_id_public(self, main_route_id: int):
-        stmt = select(Route).where(Route.main_route_id == main_route_id, Route.status == "public").order_by(
-            Route.version.desc())
+        stmt = select(self.model).where(self.model.main_route_id == main_route_id,
+                                        self.model.status == "public").order_by(
+            self.model.version.desc())
         route = await self.session.execute(stmt)
         route = route.scalars().first()
         return route
 
     async def find_all_public_routes(self):
-        stmt = select(Route.main_route_id).group_by(Route.main_route_id)
+        stmt = select(self.model.main_route_id).group_by(self.model.main_route_id)
         main_route_id = await self.session.execute(stmt)
         main_route_id = main_route_id.scalars().all()
         routes = []
         for id in main_route_id:
-            stmt = select(Route).where(Route.main_route_id == id, Route.status == "public").order_by(
-                Route.version.desc())
+            stmt = select(self.model).where(self.model.main_route_id == id, self.model.status == "public").order_by(
+                self.model.version.desc())
             route = await self.session.execute(stmt)
             route = route.scalars().first()
             if route:
@@ -67,12 +68,12 @@ class RouteRepository(Repository):
         return routes
 
     async def find_all_user_routes(self, user_id):
-        stmt = select(Route.main_route_id).where(Route.user_id == user_id).group_by(Route.main_route_id)
+        stmt = select(self.model.main_route_id).where(self.model.user_id == user_id).group_by(self.model.main_route_id)
         main_route_id = await self.session.execute(stmt)
         main_route_id = main_route_id.scalars().all()
         routes = []
         for id in main_route_id:
-            stmt = select(Route).where(Route.main_route_id == id).order_by(Route.version.desc())
+            stmt = select(self.model).where(self.model.main_route_id == id).order_by(self.model.version.desc())
             route = await self.session.execute(stmt)
             route = route.scalars().first()
             routes.append(route)
@@ -85,3 +86,10 @@ class RouteRepository(Repository):
             if route.status == 'public':
                 for_return.append(route)
         return for_return
+
+    async def change_status(self, id: int, status: str):
+        stmt = select(self.model).where(self.model.main_route_id == id).order_by(self.model.version.desc())
+        route = await self.session.execute(stmt)
+        route = route.scalars().first()
+        route.status = status
+        self.session.add(route)
