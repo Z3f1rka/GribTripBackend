@@ -1,13 +1,14 @@
 from typing import Annotated
 
 from fastapi import APIRouter
+from fastapi import Query
 from fastapi import Depends
 from fastapi.params import Header
 from fastapi.security import OAuth2PasswordRequestForm
 
 from app.api.schemas import UserCreateParameters
 from app.api.schemas import UserCreateResponse
-from app.api.schemas import UserGetMeResponse
+from app.api.schemas import UserGetResponse
 from app.api.schemas import UserLogInParameters
 from app.api.schemas import UserLogInResponse
 from app.services import UserService
@@ -24,7 +25,7 @@ async def get_user_service(uow: IUnitOfWork = Depends(UnitOfWork)) -> UserServic
 
 @router.post("/register")
 async def register(
-    user: UserCreateParameters, user_service: UserService = Depends(get_user_service), # noqa
+        user: UserCreateParameters, user_service: UserService = Depends(get_user_service),  # noqa
 ) -> UserCreateResponse:  # noqa
     """Регистрация пользователя"""
     access_token, refresh_token = await user_service.register(
@@ -38,7 +39,7 @@ async def register(
 
 @router.post("/login")
 async def login(
-    user: UserLogInParameters, user_service: UserService = Depends(get_user_service), # noqa
+        user: UserLogInParameters, user_service: UserService = Depends(get_user_service),  # noqa
 ) -> UserLogInResponse:  # noqa
     access_token, refresh_token = await user_service.login(email=user.email, password=user.password)
     response = UserLogInResponse(access_token=access_token, refresh_token=refresh_token, token_type="bearer")
@@ -47,7 +48,8 @@ async def login(
 
 @router.post("/docs/login")
 async def docs_login(
-    user: Annotated[OAuth2PasswordRequestForm, Depends()], user_service: UserService = Depends(get_user_service) # noqa
+        user: Annotated[OAuth2PasswordRequestForm, Depends()], user_service: UserService = Depends(get_user_service)
+        # noqa
 ) -> UserLogInResponse:  # noqa
     access_token, refresh_token = await user_service.login(email=user.username, password=user.password)
     response = UserLogInResponse(access_token=access_token, refresh_token=refresh_token, token_type="bearer")
@@ -56,15 +58,22 @@ async def docs_login(
 
 @router.get("/me")
 async def me(
-    jwt_access: Annotated[str, Depends(get_jwt_payload)], user_service: UserService = Depends(get_user_service), # noqa
-) -> UserGetMeResponse:
+        jwt_access: Annotated[str, Depends(get_jwt_payload)], user_service: UserService = Depends(get_user_service),
+        # noqa
+) -> UserGetResponse:
     resp = await user_service.get_me(token=jwt_access)
     return resp
 
 
 @router.get("/refresh")
 async def refresh(
-    jwt_refresh: Annotated[str, Header()], user_service: UserService = Depends(get_user_service), # noqa
+        jwt_refresh: Annotated[str, Header()], user_service: UserService = Depends(get_user_service),  # noqa
 ) -> UserLogInResponse:
     resp = await user_service.refresh(get_jwt_payload(jwt_refresh))
     return UserLogInResponse(access_token=resp, refresh_token=jwt_refresh, token_type="bearer")
+
+
+@router.get("/user")
+async def get_user(user_id: Annotated[int, Query()], user_service: UserService = Depends(get_user_service)) -> UserGetResponse:  # noqa
+    resp = await user_service.get_user_by(id=user_id)
+    return resp
