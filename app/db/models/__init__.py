@@ -2,3 +2,4 @@
 from .route import Route
 from .session import Session
 from .user import User
+from .comments import Comment
