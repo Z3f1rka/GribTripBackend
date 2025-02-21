@@ -1,8 +1,8 @@
 from typing import Annotated
 
 from fastapi import APIRouter
-from fastapi import Query
 from fastapi import Depends
+from fastapi import Query
 from fastapi.params import Header
 from fastapi.security import OAuth2PasswordRequestForm
 
@@ -48,8 +48,7 @@ async def login(
 
 @router.post("/docs/login")
 async def docs_login(
-        user: Annotated[OAuth2PasswordRequestForm, Depends()], user_service: UserService = Depends(get_user_service)
-        # noqa
+        user: Annotated[OAuth2PasswordRequestForm, Depends()], user_service: UserService = Depends(get_user_service) # noqa
 ) -> UserLogInResponse:  # noqa
     access_token, refresh_token = await user_service.login(email=user.username, password=user.password)
     response = UserLogInResponse(access_token=access_token, refresh_token=refresh_token, token_type="bearer")
@@ -58,8 +57,7 @@ async def docs_login(
 
 @router.get("/me")
 async def me(
-        jwt_access: Annotated[str, Depends(get_jwt_payload)], user_service: UserService = Depends(get_user_service),
-        # noqa
+        jwt_access: Annotated[str, Depends(get_jwt_payload)], user_service: UserService = Depends(get_user_service), # noqa
 ) -> UserGetResponse:
     resp = await user_service.get_me(token=jwt_access)
     return resp
@@ -74,6 +72,7 @@ async def refresh(
 
 
 @router.get("/user")
-async def get_user(user_id: Annotated[int, Query()], user_service: UserService = Depends(get_user_service)) -> UserGetResponse:  # noqa
+async def get_user(user_id: Annotated[int, Query()],
+                   user_service: UserService = Depends(get_user_service)) -> UserGetResponse:  # noqa
     resp = await user_service.get_user_by(id=user_id)
     return resp
