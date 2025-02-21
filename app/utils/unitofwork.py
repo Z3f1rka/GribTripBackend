@@ -6,6 +6,7 @@ from app.repositories import AdminRepo
 from app.repositories import RouteRepository
 from app.repositories import SessionRepository
 from app.repositories import UserRepository
+from app.repositories import CommentRepository
 
 
 class IUnitOfWork(ABC):
@@ -13,6 +14,8 @@ class IUnitOfWork(ABC):
     sessions: SessionRepository
     routes: RouteRepository
     admins: AdminRepo
+    comments: CommentRepository
+
 
     @abstractmethod
     def __init__(self):
@@ -46,6 +49,7 @@ class UnitOfWork(IUnitOfWork):
         self.sessions = SessionRepository(self.session)
         self.routes = RouteRepository(self.session)
         self.admins = AdminRepo(self.session)
+        self.comments = CommentRepository(self.session)
 
     async def __aexit__(self, *args):
         await self.rollback()

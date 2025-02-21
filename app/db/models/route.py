@@ -32,4 +32,4 @@ class Route(Base):
     content_blocks: Mapped[List[dict]] = mapped_column(postgresql.ARRAY(JSON), nullable=True)
     user_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("users.id", ondelete="CASCADE"))
     user = relationship("User", back_populates="routes")
-    comments = relationship('Comment', back_populates='user', cascade='all, delete-orphan')
+    comments = relationship('Comment', back_populates='routes', cascade='all, delete-orphan')
