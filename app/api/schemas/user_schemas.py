@@ -15,7 +15,6 @@ class UserCreateParameters(BaseModel):
     name: str
     email: EmailStr
     password: str
-    role: str = "user"
 
 
 class UserLogInParameters(BaseModel):

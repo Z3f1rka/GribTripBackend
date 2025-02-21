@@ -31,7 +31,6 @@ async def register(
         username=user.name,
         password=user.password,
         email=user.email,
-        role=user.role,
     )
     response = UserCreateResponse(refresh_token=refresh_token, access_token=access_token, token_type="bearer")
     return response

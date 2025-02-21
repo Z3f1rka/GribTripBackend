@@ -20,7 +20,8 @@ class RouteService:
                     return [RouteReturn.model_validate(i) for i in routes]
                 else:
                     raise HTTPException(403, "Пользователь не является владельцем маршрута")
-            return []
+            else:
+                raise HTTPException(400, "Такого маршрута не существует")
 
     async def get_public_route_by_id(self, id: int):
         async with self.uow:
@@ -38,6 +39,8 @@ class RouteService:
     async def update(self, route: RouteUpdateParameters, user_id: int):
         async with self.uow:
             db_route = await self.uow.routes.find_by_main_route_id_private(route.main_route_id)
+            if not db_route:
+                raise HTTPException(400, "Такого маршрута не существует")
             db_route = db_route[0]
             if db_route.user_id == user_id:
                 if db_route.status == "check":
@@ -76,10 +79,14 @@ class RouteService:
     async def publication_request(self, main_route_id: int, user_id: int):
         async with self.uow:
             db_route = await self.uow.routes.find_by_main_route_id_private(main_route_id)
+            if not db_route:
+                raise HTTPException(400, "Такого маршрута не существует")
             db_route = db_route[0]
             if db_route.user_id == user_id:
                 if db_route.status == "check":
                     raise HTTPException(400, "Маршрут уже находится на проверке")
+                if db_route.status == "public":
+                    raise HTTPException(400, "Маршрут уже опубликован")
                 await self.uow.routes.change_status(main_route_id, "check")
                 await self.uow.commit()
             else:
