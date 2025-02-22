@@ -15,7 +15,6 @@ class UserCreateParameters(BaseModel):
     name: str
     email: EmailStr
     password: str
-    role: str = "user"
 
 
 class UserLogInParameters(BaseModel):
@@ -29,7 +28,7 @@ class UserLogInResponse(BaseModel):
     refresh_token: str
 
 
-class UserGetMeResponse(BaseModel):
+class UserGetResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     id: int
     username: str

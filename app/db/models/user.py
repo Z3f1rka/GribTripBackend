@@ -22,3 +22,4 @@ class User(Base):
     avatar: Mapped[str] = mapped_column(String, nullable=True)
     sessions = relationship("Session", back_populates="user", cascade="all, delete-orphan")
     routes = relationship('Route', back_populates='user', cascade='all, delete-orphan')
+    comments = relationship('Comment', back_populates='user')
