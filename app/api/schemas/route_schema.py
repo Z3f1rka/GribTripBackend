@@ -62,6 +62,7 @@ class AllRouteReturn(BaseModel):
 
 
 class RouteReturnNoContentBlocks(AllRouteReturn):
+    model_config = ConfigDict(from_attributes=True)
     user_id: int
     approved_id: int | None = None
     status: str
