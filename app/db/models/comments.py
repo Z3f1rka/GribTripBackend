@@ -18,7 +18,7 @@ class Comment(Base):
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, index=True)
     text: Mapped[str] = mapped_column(String, nullable=True)
-    rating: Mapped[str] = mapped_column(Integer, nullable=False)
+    rating: Mapped[str] = mapped_column(Integer, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, nullable=False, default=datetime.now())
     answer: Mapped[bool] = mapped_column(Boolean, default=False)
     type: Mapped[str] = mapped_column(String, default='public')
