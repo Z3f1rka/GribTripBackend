@@ -45,11 +45,6 @@ class RouteService:
             if db_route.user_id == user_id:
                 if db_route.status == "check":
                     raise HTTPException(400, "Маршрут находится на проверке")
-                if not route.content_blocks:
-                    if db_route.content_blocks:
-                        content_blocks = [i.model_dump() for i in db_route.content_blocks]
-                    else:
-                        content_blocks = []
                 else:
                     content_blocks = [i.model_dump() for i in route.content_blocks]
                 await self.uow.routes.update(title=route.title, description=route.description, photo=route.photo,
