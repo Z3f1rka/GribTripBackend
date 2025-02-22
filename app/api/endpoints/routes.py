@@ -80,3 +80,10 @@ async def publication_request(jwt_access: Annotated[str, Depends(get_jwt_payload
                               service: RouteService = Depends(get_route_service)): # noqa
     """Отправка маршрута на проверку. В качестве route_id передавать main_route_id"""
     await service.publication_request(route_id, int(jwt_access["sub"]))
+
+
+@router.delete('/delete_route')
+async def delete_route(jwt_access: Annotated[str, Depends(get_jwt_payload)], route_id: Annotated[int, Query()], # noqa
+                       service: RouteService = Depends(get_route_service)): # noqa
+    """Удаление маршрута. В качестве route_id передавать main_route_id"""
+    await service.delete_route(route_id=route_id, user_id=int(jwt_access["sub"]))

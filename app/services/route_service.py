@@ -91,3 +91,14 @@ class RouteService:
                 await self.uow.commit()
             else:
                 raise HTTPException(403, "Пользователь не является владельцем маршрута")
+
+    async def delete_route(self, route_id: int, user_id: int):
+        async with self.uow:
+            db_route = await self.uow.routes.find_by_main_route_id_private(main_route_id=route_id)
+            if not db_route:
+                raise HTTPException(400, "Такого маршрута не существует")
+            if db_route[0].user_id != user_id:
+                raise HTTPException(403, "Пользователь не является владельцем маршрута")
+            for route in db_route:
+                await self.uow.routes.del_one(id=route.id)
+            await self.uow.commit()

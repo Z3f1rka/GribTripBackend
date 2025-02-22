@@ -24,5 +24,5 @@ class Comment(Base):
     type: Mapped[str] = mapped_column(String, default='public')
     user_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("users.id"))
     user = relationship("User", back_populates="comments")
-    route_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("routes.id"))
-    routes = relationship("Route", back_populates="comments")
+    route_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("routes.id", ondelete="CASCADE"))
+    route = relationship("Route", back_populates="comments")
