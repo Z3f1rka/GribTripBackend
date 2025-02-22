@@ -3,10 +3,10 @@ from abc import abstractmethod
 
 from app.db.database import async_session_maker
 from app.repositories import AdminRepo
+from app.repositories import CommentRepository
 from app.repositories import RouteRepository
 from app.repositories import SessionRepository
 from app.repositories import UserRepository
-from app.repositories import CommentRepository
 
 
 class IUnitOfWork(ABC):
@@ -15,7 +15,6 @@ class IUnitOfWork(ABC):
     routes: RouteRepository
     admins: AdminRepo
     comments: CommentRepository
-
 
     @abstractmethod
     def __init__(self):

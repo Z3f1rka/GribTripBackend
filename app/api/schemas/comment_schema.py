@@ -1,6 +1,8 @@
-from pydantic import BaseModel
 from datetime import datetime
+
+from pydantic import BaseModel
 from pydantic import ConfigDict
+
 
 class CommentCreateParametrs(BaseModel):
     model_config = ConfigDict(from_attributes=True)
