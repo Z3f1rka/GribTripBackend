@@ -33,10 +33,10 @@ async def get_all_user_comments(jwt_access: Annotated[str, Depends(get_jwt_paylo
     return comments
 
 
-@router.get('/get_all_route_comments')
+@router.get('/get_all_route_public_comments')
 async def get_all_user_comments(route_id: int, service: CommentService = Depends(get_comment_service)) -> list[CommentReturn]: # noqa
-    """Получение всех комментариев одного маршрута"""
-    comments = await service.get_all_route_comments(route_id)
+    """Получение всех публичных комментариев одного маршрута"""
+    comments = await service.get_all_route_public_comments(route_id)
     return comments
 
 

@@ -21,6 +21,7 @@ class Comment(Base):
     rating: Mapped[str] = mapped_column(Integer, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime, nullable=False, default=datetime.now())
     answer: Mapped[bool] = mapped_column(Boolean, default=False)
+    type: Mapped[str] = mapped_column(String, default='public')
     user_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("users.id"))
     user = relationship("User", back_populates="comments")
     route_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("routes.id"))

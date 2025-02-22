@@ -10,6 +10,7 @@ class CommentCreateParametrs(BaseModel):
     rating: int
     answer: bool | None = False
     route_id: int
+    type: str | None = 'public'
 
 
 class CommentReturn(CommentCreateParametrs):
