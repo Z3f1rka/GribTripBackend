@@ -1,5 +1,7 @@
 from fastapi import HTTPException
+from sqlalchemy.exc import NoResultFound
 
+from app.api.schemas import CommentCreateParametrs
 from app.utils.unitofwork import IUnitOfWork
 
 
@@ -9,12 +11,37 @@ class AdminService:
 
     async def approve(self, id: int, user_id: int):
         async with self.uow:
-            user = await self.uow.users.find_one(id=user_id)
+            route = (await self.uow.routes.find_by_main_route_id_private(id))[0]
+            try:
+                user = await self.uow.users.find_one(id=user_id)
+            except NoResultFound:
+                raise HTTPException(400, "Такого пользователя не существует")
+
             if user.role != "admin":
                 raise HTTPException(403, "У пользователя нет прав администратора")
+
+            if route.status != "check":
+                raise HTTPException(400, "Маршрут не находится на рассмотрении у админа")
             await self.uow.admins.approve(id, user_id)
             await self.uow.commit()
 
+    async def reject(self, response: CommentCreateParametrs, user_id: int):
+        async with self.uow:
+            try:
+                user = await self.uow.users.find_one(id=user_id)
+            except NoResultFound:
+                raise HTTPException(400, "Такого пользователя не существует")
 
-if __name__ == "__main__":
-    pass
+            try:
+                route = await self.uow.routes.find_one(main_route_id=response.route_id,
+                                                       status="check")
+            except NoResultFound:
+                raise HTTPException(400, "Такого маршрута не существует")
+
+            if user.role != "admin":
+                raise HTTPException(403, "У пользователя нет прав администратора")
+            if route.status != "check":
+                raise HTTPException(400, "Маршрут не находится на рассмотрении у админа")
+            await self.uow.admins.reject(user_id=user_id, text=response.text, route_id=response.route_id)
+            await self.uow.routes.change_status(response.route_id, "private")
+            await self.uow.commit()
