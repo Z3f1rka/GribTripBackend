@@ -3,9 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api import admin_router
 from app.api import comment_router
+from app.api import history_router
 from app.api import route_router
 from app.api import user_router
-from app.api import history_router
 
 
 # TODO: настроить нормально CORS
