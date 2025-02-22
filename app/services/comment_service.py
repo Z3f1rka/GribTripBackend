@@ -16,7 +16,8 @@ class CommentService:
             except Exception:
                 raise HTTPException(400, "Маршрут для комментирования не найден")
             await self.uow.comments.add_comment(user_id=user_id, text=comment.text, rating=comment.rating,
-                                                answer=comment.answer, route_id=comment.route_id, type=comment.type)
+                                                answer=comment.answer, main_route_id=comment.route_id,
+                                                type=comment.type)
             await self.uow.commit()
 
     async def get_all_user_comments(self, user_id: int):
