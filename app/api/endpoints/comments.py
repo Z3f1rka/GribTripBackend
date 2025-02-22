@@ -38,3 +38,10 @@ async def get_all_user_comments(route_id: int, service: CommentService = Depends
     """Получение всех комментариев одного маршрута"""
     comments = await service.get_all_route_comments(route_id)
     return comments
+
+
+@router.delete('/delete')
+async def delete_comment(comment_id: int, jwt_access: Annotated[str, Depends(get_jwt_payload)],
+                         service: CommentService = Depends(get_comment_service)):
+    """Удаление комментария"""
+    await service.delete_comment(comment_id=comment_id, user_id=int(jwt_access["sub"]))
