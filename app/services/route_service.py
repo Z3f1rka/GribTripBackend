@@ -81,10 +81,10 @@ class RouteService:
             db_route = await self.uow.routes.find_by_main_route_id_private(main_route_id)
             if not db_route:
                 raise HTTPException(400, "Такого маршрута не существует")
+            if any(i.status == "check" for i in db_route):
+                raise HTTPException(400, "Маршрут находится на проверке")
             db_route = db_route[0]
             if db_route.user_id == user_id:
-                if db_route.status == "check":
-                    raise HTTPException(400, "Маршрут уже находится на проверке")
                 if db_route.status == "public":
                     raise HTTPException(400, "Маршрут уже опубликован")
                 await self.uow.routes.change_status(main_route_id, "check")
