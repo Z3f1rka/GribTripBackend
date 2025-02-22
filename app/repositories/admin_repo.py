@@ -4,6 +4,7 @@ from sqlalchemy import insert
 from sqlalchemy import select
 from sqlalchemy import update
 
+from app.db.models import Comment
 from app.db.models import Route
 from app.repositories.basic_repo import Repository
 
@@ -22,3 +23,8 @@ class AdminRepo(Repository):
         route.status = "public"
         route.approved_id = admin_id
         self.session.add(route)
+
+    async def reject(self, user_id: int, text: str, route_id: int):
+        stmt = insert(Comment).values(**{"user_id": user_id, "text": text,
+                                            "route_id": route_id, "type": "admin"})
+        await self.session.execute(stmt)
