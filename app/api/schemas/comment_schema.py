@@ -3,6 +3,8 @@ from datetime import datetime
 from pydantic import BaseModel
 from pydantic import ConfigDict
 
+from app.api.schemas.user_schemas import UserGetResponse
+
 
 class CommentCreateParametrs(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -16,3 +18,5 @@ class CommentCreateParametrs(BaseModel):
 class CommentReturn(CommentCreateParametrs):
     id: int
     created_at: datetime
+    user: UserGetResponse
+
