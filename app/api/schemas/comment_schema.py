@@ -19,4 +19,3 @@ class CommentReturn(CommentCreateParametrs):
     id: int
     created_at: datetime
     user: UserGetResponse
-
