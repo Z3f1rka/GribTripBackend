@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 from sqlalchemy.exc import NoResultFound
 
-from app.api.schemas import UserGetResponse
+from app.api.schemas import UserGetResponse, UserFavoritesGet
 from app.utils import create_token
 from app.utils import verify_password
 from app.utils.unitofwork import IUnitOfWork
@@ -60,3 +60,21 @@ class UserService:
             return access_token
         else:
             raise HTTPException(400, "Не валидный токен")
+
+    async def add_favorites(self, user_id: int, route_id: int):
+        async with self.uow:
+            await self.uow.users.add_favorites(user_id, route_id)
+            await self.uow.commit()
+
+    async def delete_favorites(self, user_id: int, route_id: int):
+        async with self.uow:
+            favorites = await self.uow.users.get_favorites(user_id)
+            if not any((i.user_id == user_id and i.route_id == route_id) for i in favorites):
+                raise HTTPException(400, "У пользователя нет такого маршрута в избранных")
+            await self.uow.users.delete_favorite(user_id, route_id)
+            await self.uow.commit()
+
+    async def get_favotries(self, user_id: int):
+        async with self.uow:
+            routes = await self.uow.users.get_favorites(user_id)
+            return [UserFavoritesGet.model_validate(i).model_dump() for i in routes]
