@@ -34,6 +34,8 @@ class CommentService:
             except Exception:
                 raise HTTPException(400, "Такого маршрута не существует")
             comments = await self.uow.comments.get_all_route_public_comments(route_id=route_id)
+            for i in comments:
+                i.user = await self.uow.users.find_one(id=i.user_id)
             return [CommentReturn.model_validate(i) for i in comments]
 
     async def delete_comment(self, user_id: int, comment_id: int):
