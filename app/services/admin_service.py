@@ -45,3 +45,14 @@ class AdminService:
             await self.uow.admins.reject(user_id=user_id, text=response.text, route_id=response.route_id)
             await self.uow.routes.change_status(response.route_id, "private")
             await self.uow.commit()
+
+    async def get_publication_requests(self, user_id: int):
+        async with self.uow:
+            try:
+                user = await self.uow.users.find_one(id=user_id)
+            except NoResultFound:
+                raise HTTPException(400, "Такого пользователя не существует")
+            if user.role != "admin":
+                raise HTTPException(403, "У пользователя нет прав администратора")
+
+            return await self.uow.admins.get_requests()
