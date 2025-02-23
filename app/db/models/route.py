@@ -25,7 +25,7 @@ class Route(Base):
     approved_id: Mapped[int] = mapped_column(BigInteger, nullable=True)
     status: Mapped[str] = mapped_column(String, nullable=False, default='private')
     photo: Mapped[str] = mapped_column(String, nullable=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime, nullable=True, default=datetime.now())
+    created_at: Mapped[datetime] = mapped_column(DateTime, nullable=True, default=datetime.utcnow())
     rating: Mapped[int] = mapped_column(Integer, default=0, nullable=True)
     main_route_id: Mapped[int] = mapped_column(BigInteger, nullable=True)
     version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)

@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     DB_USER: str
     DB_PASS: str
     DB_NAME: str
+    HALFLIFE: int
     ACCESS_TOKEN_LT: int
     REFRESH_TOKEN_LT: int
     JWT_SECRET_KEY: str

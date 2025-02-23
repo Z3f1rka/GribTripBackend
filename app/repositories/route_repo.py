@@ -2,8 +2,10 @@ from sqlalchemy import insert
 from sqlalchemy import select
 from sqlalchemy import update
 
+from app.db.models import Comment
 from app.db.models import Route
 from app.repositories.basic_repo import Repository
+from app.utils.rating_formula import rating_calculation
 
 
 class RouteRepository(Repository):
@@ -43,6 +45,13 @@ class RouteRepository(Repository):
         stmt = select(self.model).where(self.model.main_route_id == main_route_id).order_by(self.model.version.desc())
         route = await self.session.execute(stmt)
         route = route.scalars().all()
+        stmt = select(Comment).where(Comment.route_id == main_route_id, Comment.type == "public")
+        comments = await self.session.execute(stmt)
+        comments = comments.scalars().all()
+        if comments:
+            comments = [(i.created_at, i.rating) for i in comments]
+            for i in route:
+                i.rating = rating_calculation(comments)
         return route
 
     async def find_by_main_route_id_public(self, main_route_id: int):
@@ -51,6 +60,14 @@ class RouteRepository(Repository):
             self.model.version.desc())
         route = await self.session.execute(stmt)
         route = route.scalars().first()
+        stmt = select(Comment).where(Comment.route_id == main_route_id, Comment.type == "public")
+        comments = await self.session.execute(stmt)
+        comments = comments.scalars().all()
+        if not comments:
+            route.rating = 0
+        else:
+            comments = [(i.created_at, i.rating) for i in comments]
+            route.rating = rating_calculation(comments)
         return route
 
     async def find_all_public_routes(self):
@@ -76,6 +93,14 @@ class RouteRepository(Repository):
             stmt = select(self.model).where(self.model.main_route_id == id).order_by(self.model.version.desc())
             route = await self.session.execute(stmt)
             route = route.scalars().first()
+            stmt = select(Comment).where(Comment.route_id == id, Comment.type == "public")
+            comments = await self.session.execute(stmt)
+            comments = comments.scalars().all()
+            if not comments:
+                route.rating = 0
+            else:
+                comments = [(i.created_at, i.rating) for i in comments]
+                route.rating = rating_calculation(comments)
             routes.append(route)
         return routes
 
@@ -84,6 +109,15 @@ class RouteRepository(Repository):
         for_return = []
         for route in routes:
             if route.status == 'public':
+                stmt = select(Comment).where(Comment.route_id == route.main_route_id, Comment.type == "public")
+
+                comments = await self.session.execute(stmt)
+                comments = comments.scalars().all()
+                if not comments:
+                    route.rating = 0
+                else:
+                    comments = [(i.created_at, i.rating) for i in comments]
+                    route.rating = rating_calculation(comments)
                 for_return.append(route)
         return for_return
 
