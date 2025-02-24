@@ -1,7 +1,8 @@
 from fastapi import HTTPException
 from sqlalchemy.exc import NoResultFound
 
-from app.api.schemas import UserGetResponse, UserFavoritesGet
+from app.api.schemas import UserFavoritesGet
+from app.api.schemas import UserGetResponse
 from app.utils import create_token
 from app.utils import verify_password
 from app.utils.unitofwork import IUnitOfWork

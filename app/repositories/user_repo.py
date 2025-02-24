@@ -1,10 +1,12 @@
 from fastapi import HTTPException
-from sqlalchemy.exc import IntegrityError, NoResultFound
 from sqlalchemy import insert
 from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import NoResultFound
 
+from app.db.models import Favorites
+from app.db.models import Route
 from app.db.models import User
-from app.db.models import Favorites, Route
 from app.repositories.basic_repo import Repository
 from app.utils import get_password_hash
 

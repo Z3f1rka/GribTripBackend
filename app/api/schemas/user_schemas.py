@@ -3,7 +3,8 @@ from datetime import datetime
 from pydantic import BaseModel
 from pydantic import ConfigDict
 from pydantic import EmailStr
-from .route_schema import RouteReturn
+
+from app.api.schemas.route_schema import RouteReturn
 
 
 class UserCreateResponse(BaseModel):
