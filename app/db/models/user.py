@@ -23,3 +23,4 @@ class User(Base):
     sessions = relationship("Session", back_populates="user", cascade="all, delete-orphan")
     routes = relationship('Route', back_populates='user', cascade='all, delete-orphan')
     comments = relationship('Comment', back_populates='user')
+    favorites = relationship("Favorites", back_populates="user", cascade='all, delete-orphan')

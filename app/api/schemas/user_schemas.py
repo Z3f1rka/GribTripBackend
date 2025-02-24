@@ -4,6 +4,8 @@ from pydantic import BaseModel
 from pydantic import ConfigDict
 from pydantic import EmailStr
 
+from app.api.schemas.route_schema import RouteReturn
+
 
 class UserCreateResponse(BaseModel):
     access_token: str
@@ -36,3 +38,10 @@ class UserGetResponse(BaseModel):
     role: str
     created_at: datetime
     avatar: str | None = None
+
+
+class UserFavoritesGet(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    user_id: int
+    route_id: int
+    route: RouteReturn
