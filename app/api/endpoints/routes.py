@@ -24,9 +24,9 @@ async def get_route_service(uow: IUnitOfWork = Depends(UnitOfWork)) -> RouteServ
 
 @router.post("/create", status_code=status.HTTP_201_CREATED)
 async def create(jwt_access: Annotated[str, Depends(get_jwt_payload)], route: RouteCreateParameters,
-                 service: RouteService = Depends(get_route_service)):  # noqa
+                 service: RouteService = Depends(get_route_service)) -> int:  # noqa
     """Создание маршрута"""
-    await service.create_route(int(jwt_access["sub"]), route.title)
+    return await service.create_route(int(jwt_access["sub"]), route.title)
 
 
 @router.post("/update", status_code=status.HTTP_200_OK)

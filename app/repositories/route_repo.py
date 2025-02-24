@@ -18,6 +18,7 @@ class RouteRepository(Repository):
         stmt = update(self.model).where(self.model.id == route_id).values(main_route_id=route_id)
         await self.session.execute(stmt)
         await self.session.commit()
+        return route_id
 
     async def update(self, title: str, main_route_id: int, description: str | None = None, photo: str | None = None,
                      content_blocks: list | None = None):

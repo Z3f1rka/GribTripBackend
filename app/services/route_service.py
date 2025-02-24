@@ -33,8 +33,9 @@ class RouteService:
 
     async def create_route(self, user_id: int, title: str):
         async with self.uow:
-            await self.uow.routes.add_route(user_id=user_id, title=title)
+            route_id = await self.uow.routes.add_route(user_id=user_id, title=title)
             await self.uow.commit()
+            return route_id
 
     async def update(self, route: RouteUpdateParameters, user_id: int):
         async with self.uow:
