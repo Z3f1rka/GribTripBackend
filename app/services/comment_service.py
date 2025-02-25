@@ -25,6 +25,8 @@ class CommentService:
     async def get_all_user_comments(self, user_id: int):
         async with self.uow:
             comments = await self.uow.comments.get_all_user_comments(user_id=user_id)
+            for i in comments:
+                i.user = await self.uow.users.find_one(id=i.user_id)
             return [CommentReturn.model_validate(i) for i in comments]
 
     async def get_all_route_public_comments(self, route_id: int):
