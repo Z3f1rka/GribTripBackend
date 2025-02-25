@@ -48,3 +48,25 @@ class UserRepository(Repository):
             route = (await self.session.execute(stmt)).scalars().first()
             i.route = route
         return user_favorite
+
+    async def update_user(self, id: int, name: str | None = None, email: str | None = None, avatar: str | None = None):
+        stmt = select(self.model).where(self.model.id == id)
+        user = (await self.session.execute(stmt)).scalars().first()
+        if not name:
+            name = user.username
+        else:
+            stmt = select(self.model).where(self.model.username == name)
+            if (await self.session.execute(stmt)).scalars().all():
+                raise HTTPException(400, "Пользователь с таким именем уже существует")
+        if not email:
+            email = user.email
+        else:
+            stmt = select(self.model).where(self.model.email == email)
+            if (await self.session.execute(stmt)).scalars().all():
+                raise HTTPException(400, "Пользователь с такой почтой уже существует")
+        if not avatar:
+            avatar = user.avatar
+        user.avatar = avatar
+        user.username = name
+        user.email = email
+        self.session.add(user)

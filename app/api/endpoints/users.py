@@ -13,6 +13,7 @@ from app.api.schemas import UserFavoritesGet
 from app.api.schemas import UserGetResponse
 from app.api.schemas import UserLogInParameters
 from app.api.schemas import UserLogInResponse
+from app.api.schemas import UserUpdateParameters
 from app.services import UserService
 from app.utils import get_jwt_payload
 from app.utils import IUnitOfWork
@@ -50,7 +51,8 @@ async def login(
 
 @router.post("/docs/login")
 async def docs_login(
-        user: Annotated[OAuth2PasswordRequestForm, Depends()], user_service: UserService = Depends(get_user_service) # noqa
+        user: Annotated[OAuth2PasswordRequestForm, Depends()], user_service: UserService = Depends(get_user_service), # noqa
+        # noqa
 ) -> UserLogInResponse:  # noqa
     access_token, refresh_token = await user_service.login(email=user.username, password=user.password)
     response = UserLogInResponse(access_token=access_token, refresh_token=refresh_token, token_type="bearer")
@@ -93,6 +95,12 @@ async def add_favorites(jwt_access: Annotated[str, Depends(get_jwt_payload)], ro
 
 
 @router.get("/favorites/fetch")
-async def get(jwt_access: Annotated[str, Depends(get_jwt_payload)], # noqa
-              user_service: UserService = Depends(get_user_service)) -> List[UserFavoritesGet]: # noqa
+async def get(jwt_access: Annotated[str, Depends(get_jwt_payload)],  # noqa
+              user_service: UserService = Depends(get_user_service)) -> List[UserFavoritesGet]:  # noqa
     return await user_service.get_favotries(int(jwt_access["sub"]))
+
+
+@router.post("/update", status_code=status.HTTP_200_OK)
+async def update_user(jwt_access: Annotated[str, Depends(get_jwt_payload)], user: UserUpdateParameters,  # noqa
+                      user_service: UserService = Depends(get_user_service)):  # noqa
+    await user_service.update_user(int(jwt_access["sub"]), user)

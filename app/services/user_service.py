@@ -3,6 +3,7 @@ from sqlalchemy.exc import NoResultFound
 
 from app.api.schemas import UserFavoritesGet
 from app.api.schemas import UserGetResponse
+from app.api.schemas import UserUpdateParameters
 from app.utils import create_token
 from app.utils import verify_password
 from app.utils.unitofwork import IUnitOfWork
@@ -79,3 +80,13 @@ class UserService:
         async with self.uow:
             routes = await self.uow.users.get_favorites(user_id)
             return [UserFavoritesGet.model_validate(i).model_dump() for i in routes]
+
+    async def update_user(self, user_id: int, user_params: UserUpdateParameters):
+        async with self.uow:
+            try:
+                user = await self.uow.users.find_one(id=user_id) # noqa
+            except NoResultFound:
+                raise HTTPException(400, "Пользователя не существует")
+            await self.uow.users.update_user(user_id, name=user_params.username,
+                                             email=user_params.email, avatar=user_params.avatar)
+            await self.uow.commit()

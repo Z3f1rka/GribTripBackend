@@ -40,6 +40,12 @@ class UserGetResponse(BaseModel):
     avatar: str | None = None
 
 
+class UserUpdateParameters(BaseModel):
+    username: str | None = None
+    email: EmailStr | None = None
+    avatar: str | None = None
+
+
 class UserFavoritesGet(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     user_id: int
