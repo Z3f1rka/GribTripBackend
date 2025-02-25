@@ -100,6 +100,12 @@ async def get(jwt_access: Annotated[str, Depends(get_jwt_payload)],  # noqa
     return await user_service.get_favotries(int(jwt_access["sub"]))
 
 
+@router.get("/favorites/fetch/other")
+async def get(user_id: int,  # noqa
+              user_service: UserService = Depends(get_user_service)) -> List[UserFavoritesGet]:  # noqa
+    return await user_service.get_favotries(user_id)
+
+
 @router.post("/update", status_code=status.HTTP_200_OK)
 async def update_user(jwt_access: Annotated[str, Depends(get_jwt_payload)], user: UserUpdateParameters,  # noqa
                       user_service: UserService = Depends(get_user_service)):  # noqa
