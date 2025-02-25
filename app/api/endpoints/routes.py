@@ -1,9 +1,14 @@
+import os
 from typing import Annotated
+from typing import Literal
+from io import BytesIO
 
 from fastapi import APIRouter
 from fastapi import Depends
 from fastapi import Query
 from fastapi import status
+from fastapi.responses import FileResponse
+import aiofile
 
 from app.api.schemas import AllRouteReturn
 from app.api.schemas import RouteCreateParameters
@@ -87,3 +92,14 @@ async def delete_route(jwt_access: Annotated[str, Depends(get_jwt_payload)], rou
                        service: RouteService = Depends(get_route_service)): # noqa
     """Удаление маршрута. В качестве route_id передавать main_route_id"""
     await service.delete_route(route_id=route_id, user_id=int(jwt_access["sub"]))
+
+
+@router.get("/export")
+async def export(route_id: int, format: Literal["gpx", "kml"], jwt_access: Annotated[str, Depends(get_jwt_payload)], service: RouteService = Depends(get_route_service)) -> FileResponse:
+    available_convertions = {"gpx": service.export_to_gpx}
+    xml = await available_convertions[format](route_id, int(jwt_access["sub"]))
+    async with aiofile.async_open(xml[1] + ".gpx", mode="a") as f:
+        await f.write(xml[0])
+    file = FileResponse(xml[1] + ".gpx")
+    return file
+

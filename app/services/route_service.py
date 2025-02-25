@@ -1,4 +1,5 @@
 from fastapi import HTTPException
+import gpxpy
 
 from app.api.schemas.route_schema import AllRouteReturn
 from app.api.schemas.route_schema import RouteReturn
@@ -98,3 +99,23 @@ class RouteService:
             for route in db_route:
                 await self.uow.routes.del_one(id=route.id)
             await self.uow.commit()
+
+    async def export_to_gpx(self, route_id: int, user_id: int):
+        async with self.uow:
+            db_route = (await self.uow.routes.find_by_main_route_id_private(main_route_id=route_id))[0]
+            if not db_route:
+                raise HTTPException(400, "Такого маршрута не существует")
+            if db_route.user_id != user_id:
+                db_route = await self.uow.routes.find_by_main_route_id_public(route_id)
+                if not db_route:
+                    raise HTTPException(400, "Этот маршрут недоступен")
+            gpx_obj = gpxpy.gpx.GPX()
+            gpx_route = gpxpy.gpx.GPXRoute(name=db_route.title, description=db_route.description)
+            if not db_route.content_blocks:
+                gpx_obj.routes.append(gpx_route)
+                return gpx_obj.to_xml(), db_route.title
+            content_blocks = sorted(db_route.content_blocks, key=lambda x: x["position"])
+            for block in content_blocks:
+                gpx_route.points.append(gpxpy.gpx.GPXRoutePoint(block["geoposition"][0], block["geoposition"][1], name=block["title"], description=block["text"]))
+            gpx_obj.routes.append(gpx_route)
+            return gpx_obj.to_xml(), db_route.title
