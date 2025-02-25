@@ -84,7 +84,7 @@ class UserService:
     async def update_user(self, user_id: int, user_params: UserUpdateParameters):
         async with self.uow:
             try:
-                user = await self.uow.users.find_one(id=user_id)
+                user = await self.uow.users.find_one(id=user_id) # noqa
             except NoResultFound:
                 raise HTTPException(400, "Пользователя не существует")
             await self.uow.users.update_user(user_id, name=user_params.username,

@@ -9,11 +9,11 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 from app.api.schemas import UserCreateParameters
 from app.api.schemas import UserCreateResponse
-from app.api.schemas import UserUpdateParameters
 from app.api.schemas import UserFavoritesGet
 from app.api.schemas import UserGetResponse
 from app.api.schemas import UserLogInParameters
 from app.api.schemas import UserLogInResponse
+from app.api.schemas import UserUpdateParameters
 from app.services import UserService
 from app.utils import get_jwt_payload
 from app.utils import IUnitOfWork
@@ -51,7 +51,7 @@ async def login(
 
 @router.post("/docs/login")
 async def docs_login(
-        user: Annotated[OAuth2PasswordRequestForm, Depends()], user_service: UserService = Depends(get_user_service)
+        user: Annotated[OAuth2PasswordRequestForm, Depends()], user_service: UserService = Depends(get_user_service), # noqa
         # noqa
 ) -> UserLogInResponse:  # noqa
     access_token, refresh_token = await user_service.login(email=user.username, password=user.password)
@@ -61,8 +61,7 @@ async def docs_login(
 
 @router.get("/me")
 async def me(
-        jwt_access: Annotated[str, Depends(get_jwt_payload)], user_service: UserService = Depends(get_user_service),
-        # noqa
+        jwt_access: Annotated[str, Depends(get_jwt_payload)], user_service: UserService = Depends(get_user_service), # noqa
 ) -> UserGetResponse:
     resp = await user_service.get_me(token=jwt_access)
     return resp
