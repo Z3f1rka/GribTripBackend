@@ -65,11 +65,24 @@ class UserService:
 
     async def add_favorites(self, user_id: int, route_id: int):
         async with self.uow:
-            await self.uow.users.add_favorites(user_id, route_id)
-            await self.uow.commit()
+            try:
+                user = await self.uow.users.find_one(id=user_id) # noqa
+            except NoResultFound:
+                raise HTTPException(400, "Пользователя не существует")
+            try:
+                favorites = await self.uow.users.get_favorites(user_id)  # noqa
+                if favorites:
+                    raise HTTPException(400, "Пользователь уже добавил маршрут в избранное")
+            except NoResultFound:
+                await self.uow.users.add_favorites(user_id, route_id)
+                await self.uow.commit()
 
     async def delete_favorites(self, user_id: int, route_id: int):
         async with self.uow:
+            try:
+                user = await self.uow.users.find_one(id=user_id) # noqa
+            except NoResultFound:
+                raise HTTPException(400, "Пользователя не существует")
             favorites = await self.uow.users.get_favorites(user_id)
             if not any((i.user_id == user_id and i.route_id == route_id) for i in favorites):
                 raise HTTPException(400, "У пользователя нет такого маршрута в избранных")
@@ -78,6 +91,10 @@ class UserService:
 
     async def get_favotries(self, user_id: int):
         async with self.uow:
+            try:
+                user = await self.uow.users.find_one(id=user_id) # noqa
+            except NoResultFound:
+                raise HTTPException(400, "Пользователя не существует")
             routes = await self.uow.users.get_favorites(user_id)
             return [UserFavoritesGet.model_validate(i).model_dump() for i in routes]
 
