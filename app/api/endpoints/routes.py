@@ -7,7 +7,7 @@ from fastapi import APIRouter
 from fastapi import Depends
 from fastapi import Query
 from fastapi import status
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, StreamingResponse
 import aiofile
 
 from app.api.schemas import AllRouteReturn
@@ -95,11 +95,11 @@ async def delete_route(jwt_access: Annotated[str, Depends(get_jwt_payload)], rou
 
 
 @router.get("/export")
-async def export(route_id: int, format: Literal["gpx", "kml"], jwt_access: Annotated[str, Depends(get_jwt_payload)], service: RouteService = Depends(get_route_service)) -> FileResponse:
+async def export(route_id: int, format: Literal["gpx", "kml"], service: RouteService = Depends(get_route_service)):
     available_convertions = {"gpx": service.export_to_gpx}
-    xml = await available_convertions[format](route_id, int(jwt_access["sub"]))
-    async with aiofile.async_open(xml[1] + ".gpx", mode="a") as f:
-        await f.write(xml[0])
-    file = FileResponse(xml[1] + ".gpx")
-    return file
+    xml = await available_convertions[format](route_id, 1)
+    file = BytesIO(xml[0].encode("utf-8"))
+    file.seek(0)
+    filename = xml[1]
+    return StreamingResponse(file, media_type="application/xml", headers={"Content-Disposition": f"attachment; filename={filename}.gpx"})
 
