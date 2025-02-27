@@ -3,6 +3,7 @@ from sqlalchemy.exc import NoResultFound
 
 from app.api.schemas import CommentCreateParametrs
 from app.utils.unitofwork import IUnitOfWork
+from app.api.schemas import AllRouteReturn
 
 
 class AdminService:
@@ -55,4 +56,4 @@ class AdminService:
             if user.role != "admin":
                 raise HTTPException(403, "У пользователя нет прав администратора")
 
-            return await self.uow.admins.get_requests()
+            return [AllRouteReturn.model_validate(i) for i in await self.uow.admins.get_requests()]
