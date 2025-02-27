@@ -61,6 +61,8 @@ class RouteRepository(Repository):
             self.model.version.desc())
         route = await self.session.execute(stmt)
         route = route.scalars().first()
+        if not route:
+            return
         stmt = select(Comment).where(Comment.route_id == main_route_id, Comment.type == "public")
         comments = await self.session.execute(stmt)
         comments = comments.scalars().all()
