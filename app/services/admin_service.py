@@ -13,6 +13,8 @@ class AdminService:
     async def approve(self, id: int, user_id: int):
         async with self.uow:
             route = (await self.uow.routes.find_by_main_route_id_private(id))[0]
+            if not route:
+                raise HTTPException(400, "Маршрута не существует")
             try:
                 user = await self.uow.users.find_one(id=user_id)
             except NoResultFound:
