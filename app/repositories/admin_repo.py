@@ -28,3 +28,8 @@ class AdminRepo(Repository):
         stmt = insert(Comment).values(**{"user_id": user_id, "text": text,
                                             "route_id": route_id, "type": "admin"})
         await self.session.execute(stmt)
+
+    async def get_requests(self):
+        stmt = select(self.model).where(self.model.status == "check")
+        routes = (await self.session.execute(stmt)).scalars().all()
+        return routes

@@ -7,6 +7,7 @@ from fastapi import HTTPException
 from fastapi import Query
 from fastapi import status
 
+from app.api.schemas import AllRouteReturn
 from app.api.schemas import CommentCreateParametrs
 from app.services import AdminService
 from app.utils import get_jwt_payload
@@ -39,3 +40,9 @@ async def reject_route(response: CommentCreateParametrs,
         print(jwt_access["role"])
         raise HTTPException(403, "У пользователя нет прав администратора")
     await service.reject(response, int(jwt_access["sub"]))
+
+
+@router.get("/get_publication_requests")
+async def get_publication_requests(jwt_access: Annotated[str, Depends(get_jwt_payload)],
+                                   service: AdminService = Depends(get_admin_service)) -> list[AllRouteReturn]:
+    return await service.get_publication_requests(int(jwt_access["sub"]))
