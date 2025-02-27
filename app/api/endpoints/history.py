@@ -17,7 +17,14 @@ async def get_history_service(uow: IUnitOfWork = Depends(UnitOfWork)) -> History
 
 
 @router.get('/routes')
-async def history(jwt_access: Annotated[str, Depends(get_jwt_payload)], service: HistoryService = Depends(get_history_service)) -> list[RouteReturnNoContentBlocks]: # noqa
+async def history(jwt_access: Annotated[str, Depends(get_jwt_payload)],
+                  service: HistoryService = Depends(get_history_service)) -> list[RouteReturnNoContentBlocks]:  # noqa
     """Получение всех маршрутов, которые пользователь прокомментировал"""
     history = await service.history(int(jwt_access["sub"]))
     return history
+
+
+@router.get("/routes/other_user")
+async def history_other(user_id: int,
+                        service: HistoryService = Depends(get_history_service)) -> list[RouteReturnNoContentBlocks]:  # noqa
+    return await service.other_history(user_id)
