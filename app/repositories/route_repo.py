@@ -26,12 +26,6 @@ class RouteRepository(Repository):
         route = await self.session.execute(stmt)
         route = route.scalars().first()
         version = route.version
-        if not description:
-            description = route.description
-        if not photo:
-            photo = route.photo
-        if not content_blocks:
-            content_blocks = route.content_blocks
         stmt = insert(self.model).values(**{"title": title,
                                             "description": description,
                                             "photo": photo,
