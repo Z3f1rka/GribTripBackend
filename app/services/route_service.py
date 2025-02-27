@@ -102,8 +102,9 @@ class RouteService:
 
     async def export_to_gpx(self, route_id: int, user_id: int):
         async with self.uow:
-            db_route = (await self.uow.routes.find_by_main_route_id_private(main_route_id=route_id))[0]
-            if not db_route:
+            try:
+                db_route = (await self.uow.routes.find_by_main_route_id_private(main_route_id=route_id))[0]
+            except Exception:
                 raise HTTPException(400, "Такого маршрута не существует")
             if db_route.user_id != user_id:
                 db_route = await self.uow.routes.find_by_main_route_id_public(route_id)
