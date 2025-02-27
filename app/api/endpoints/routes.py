@@ -1,14 +1,11 @@
-import os
-from typing import Annotated
-from typing import Literal
 from io import BytesIO
+from typing import Annotated, Literal
 
 from fastapi import APIRouter
 from fastapi import Depends
 from fastapi import Query
 from fastapi import status
-from fastapi.responses import FileResponse, StreamingResponse
-import aiofile
+from fastapi.responses import StreamingResponse
 
 from app.api.schemas import AllRouteReturn
 from app.api.schemas import RouteCreateParameters
@@ -95,11 +92,12 @@ async def delete_route(jwt_access: Annotated[str, Depends(get_jwt_payload)], rou
 
 
 @router.get("/export")
-async def export(route_id: int, format: Literal["gpx", "kml"], service: RouteService = Depends(get_route_service)):
-    available_convertions = {"gpx": service.export_to_gpx}
+async def export(route_id: int, format: Literal["gpx", "kml"], service: RouteService = Depends(get_route_service)): # noqa
+    available_convertions = {"gpx": service.export_to_gpx,
+                             "kml": service.export_to_kml}
     xml = await available_convertions[format](route_id, 1)
     file = BytesIO(xml[0].encode("utf-8"))
     file.seek(0)
-    filename = xml[1]
-    return StreamingResponse(file, media_type="application/xml", headers={"Content-Disposition": f"attachment; filename={filename}.gpx"})
-
+    # filename = xml[1]
+    return StreamingResponse(file, media_type="application/xml",
+                             headers={"Content-Disposition": f"attachment; filename=route.{format}"})
