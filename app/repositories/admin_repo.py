@@ -33,3 +33,8 @@ class AdminRepo(Repository):
         stmt = select(self.model).where(self.model.status == "check")
         routes = (await self.session.execute(stmt)).scalars().all()
         return routes
+    
+    async def get_request_by_route_id(self, route_id: int):
+        stmt = select(self.model).where(self.model.status == "check", self.model.main_route_id == route_id)
+        route = (await self.session.execute(stmt)).scalars().first()
+        return route

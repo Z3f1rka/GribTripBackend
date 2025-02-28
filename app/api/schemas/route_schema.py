@@ -39,7 +39,7 @@ class RouteReturn(Route):
     approved_id: int | None = None
     status: str
     created_at: datetime
-    rating: int
+    rating: int | None = 0
     main_route_id: int
     user_id: int
     version: int
