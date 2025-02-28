@@ -157,5 +157,5 @@ class RouteService:
                     points_for_line.append((block["geoposition"][1], block["geoposition"][0]))
                 linestring = kml.newlinestring(name="Машрут")
                 linestring.coords = points_for_line
-                kml._outputkmz()
+                # kml._outputkmz()
                 return kml.kml(), kml_create_params["name"]
