@@ -9,7 +9,7 @@ from app.api.schemas.user_schemas import UserGetResponse
 class CommentCreateParametrs(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     text: str | None = None
-    rating: int | None = None
+    rating: int = 0
     answer: bool | None = False
     route_id: int
     type: str | None = 'public'

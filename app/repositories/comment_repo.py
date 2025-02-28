@@ -8,7 +8,7 @@ from app.repositories.basic_repo import Repository
 class CommentRepository(Repository):
     model = Comment
 
-    async def add_comment(self, user_id: int, text: str, rating: int, main_route_id: int,
+    async def add_comment(self, user_id: int, text: str, main_route_id: int, rating: int = 0,
                           answer: bool | None = False, type: str | None = "public"):
         stmt = insert(self.model).values(**{"user_id": user_id, "text": text, "rating": rating,
                                             "route_id": main_route_id, "answer": answer, "type": type})

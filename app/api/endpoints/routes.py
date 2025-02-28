@@ -1,9 +1,11 @@
-from typing import Annotated
+from io import BytesIO
+from typing import Annotated, Literal
 
 from fastapi import APIRouter
 from fastapi import Depends
 from fastapi import Query
 from fastapi import status
+from fastapi.responses import StreamingResponse
 
 from app.api.schemas import AllRouteReturn
 from app.api.schemas import RouteCreateParameters
@@ -87,3 +89,15 @@ async def delete_route(jwt_access: Annotated[str, Depends(get_jwt_payload)], rou
                        service: RouteService = Depends(get_route_service)): # noqa
     """Удаление маршрута. В качестве route_id передавать main_route_id"""
     await service.delete_route(route_id=route_id, user_id=int(jwt_access["sub"]))
+
+
+@router.get("/export")
+async def export(jwt_access: Annotated[str, Depends(get_jwt_payload)], route_id: int, format: Literal["gpx", "kml"], service: RouteService = Depends(get_route_service)): # noqa
+    available_convertions = {"gpx": service.export_to_gpx,
+                             "kml": service.export_to_kml}
+    xml = await available_convertions[format](route_id, int(jwt_access["sub"]))
+    file = BytesIO(xml[0].encode("utf-8"))
+    file.seek(0)
+    # filename = xml[1]
+    return StreamingResponse(file, media_type="application/xml",
+                             headers={"Content-Disposition": f"attachment; filename=route.{format}"})

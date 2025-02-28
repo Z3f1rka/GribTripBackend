@@ -1,4 +1,6 @@
 from fastapi import HTTPException
+import gpxpy
+import simplekml
 
 from app.api.schemas.route_schema import AllRouteReturn
 from app.api.schemas.route_schema import RouteReturn
@@ -98,3 +100,62 @@ class RouteService:
             for route in db_route:
                 await self.uow.routes.del_one(id=route.id)
             await self.uow.commit()
+
+    async def export_to_gpx(self, route_id: int, user_id: int):
+        async with self.uow:
+            try:
+                db_route = (await self.uow.routes.find_by_main_route_id_private(main_route_id=route_id))[0]
+            except Exception:
+                raise HTTPException(400, "Такого маршрута не существует")
+            if db_route.user_id != user_id:
+                db_route = await self.uow.routes.find_by_main_route_id_public(route_id)
+                if not db_route:
+                    raise HTTPException(400, "Этот маршрут недоступен")
+            gpx_obj = gpxpy.gpx.GPX()
+            gpx_route = gpxpy.gpx.GPXRoute(name=db_route.title, description=db_route.description)
+            if not db_route.content_blocks:
+                gpx_obj.routes.append(gpx_route)
+                return gpx_obj.to_xml(), db_route.title
+            content_blocks = sorted(db_route.content_blocks, key=lambda x: x["position"])
+            for block in content_blocks:
+                gpx_route.points.append(gpxpy.gpx.GPXRoutePoint(block["geoposition"][0], block["geoposition"][1],
+                                                                name=block["title"], description=block["text"]))
+            gpx_obj.routes.append(gpx_route)
+            return gpx_obj.to_xml(), db_route.title
+
+    async def export_to_kml(self, route_id: int, user_id: int):
+        kml_create_params = {}
+        async with self.uow:
+            try:
+                db_route = (await self.uow.routes.find_by_main_route_id_private(main_route_id=route_id))[0]
+            except Exception:
+                raise HTTPException(400, "Такого маршрута не существует")
+            if db_route.user_id != user_id:
+                db_route = await self.uow.routes.find_by_main_route_id_public(route_id)
+                if not db_route:
+                    raise HTTPException(400, "Этот маршрут недоступен")
+
+            existing_cb = bool(db_route.content_blocks)
+            kml_create_params = {"name": db_route.title, "description": db_route.description}
+            if existing_cb:
+                x = sum([i["geoposition"][0] for i in db_route.content_blocks]) / len(db_route.content_blocks)
+                y = sum([i["geoposition"][1] for i in db_route.content_blocks]) / len(db_route.content_blocks)
+                lookat = (x, y)
+                kml_create_params["lookat"] = lookat
+            kml = simplekml.Kml(**kml_create_params)
+
+            if not existing_cb:
+                return kml.kml(), kml_create_params["name"]
+            else:
+                content_blocks = sorted(db_route.content_blocks, key=lambda x: x["position"])
+
+                points_for_line = []
+                for block in content_blocks:
+                    kml.newpoint(name=block["title"],
+                                 description=block["text"],
+                                 coords=[(block["geoposition"][1], block["geoposition"][0])])
+                    points_for_line.append((block["geoposition"][1], block["geoposition"][0]))
+                linestring = kml.newlinestring(name="Машрут")
+                linestring.coords = points_for_line
+                # kml._outputkmz()
+                return kml.kml(), kml_create_params["name"]

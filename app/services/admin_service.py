@@ -3,6 +3,7 @@ from sqlalchemy.exc import NoResultFound
 
 from app.api.schemas import AllRouteReturn
 from app.api.schemas import CommentCreateParametrs
+from app.api.schemas import RouteReturn
 from app.utils.unitofwork import IUnitOfWork
 
 
@@ -60,3 +61,16 @@ class AdminService:
                 raise HTTPException(403, "У пользователя нет прав администратора")
 
             return [AllRouteReturn.model_validate(i) for i in await self.uow.admins.get_requests()]
+
+    async def get_publication_request_by_route_id(self, user_id: int, route_id: int):
+        async with self.uow:
+            try:
+                user = await self.uow.users.find_one(id=user_id)
+            except NoResultFound:
+                raise HTTPException(400, "Такого пользователя не существует")
+            if user.role != "admin":
+                raise HTTPException(403, "У пользователя нет прав администратора")
+            route = await self.uow.admins.get_request_by_route_id(route_id)
+            if not route:
+                raise HTTPException(400, "Такого маршрута не существует")
+            return RouteReturn.model_validate(route)

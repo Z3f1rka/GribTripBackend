@@ -63,7 +63,7 @@ class RouteRepository(Repository):
         if not comments:
             route.rating = 0
         else:
-            comments = [(i.created_at, i.rating) for i in comments]
+            comments = [(i.created_at, i.rating) for i in comments if i.rating > 0]
             route.rating = rating_calculation(comments)
         return route
 
