@@ -1,0 +1,22 @@
+# flake8
+name: ContinuousDelivery
+on:
+  push:
+    branches:
+      - "main"
+jobs:
+  content_delivery:
+    runs-on: ubuntu-latest
+    environment: CD-env
+    steps:
+      - name: SetupProject
+        run: git clone --recurse-submodules "https://github.com/${{ secrets.MAIN_REPOSITORY }}"
+      - name: RepositoryRefresh
+        run: |
+          git config --global user.name "CD Bot" && \
+          git config --global user.email "${{ secrets.EMAIL_FOR_PUSH }}" && \
+          cd GribTrip && \
+          git submodule update --remote --merge && \
+          git add . && \
+          git commit -m "Backend update" && \
+          git push "https://x-access-token:${{ secrets.CD_USER_TOKEN }}@github.com/${{ secrets.MAIN_REPOSITORY }}" ${{ secrets.MAIN_BRANCH }}
