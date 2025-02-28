@@ -1,6 +1,6 @@
 FROM python:3.12-alpine AS build
 WORKDIR /application
-COPY requirements.txt .
+COPY requirements/prod.txt requirements.txt
 RUN python -m venv .venv \
 && source .venv/bin/activate \
 && pip install -r requirements.txt
