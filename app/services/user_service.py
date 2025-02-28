@@ -71,11 +71,13 @@ class UserService:
                 raise HTTPException(400, "Пользователя не существует")
             try:
                 favorites = await self.uow.users.get_favorites(user_id)  # noqa
-                if favorites:
+                if any(i.route_id == route_id for i in favorites):
                     raise HTTPException(400, "Пользователь уже добавил маршрут в избранное")
-            except NoResultFound:
-                await self.uow.users.add_favorites(user_id, route_id)
+                else:
+                    await self.uow.users.add_favorites(user_id, route_id)
                 await self.uow.commit()
+            except NoResultFound:
+                raise HTTPException(400, "Маршрут не найден")
 
     async def delete_favorites(self, user_id: int, route_id: int):
         async with self.uow:
