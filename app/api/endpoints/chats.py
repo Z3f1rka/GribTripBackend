@@ -1,10 +1,11 @@
-from typing import Annotated
-
-from fastapi import APIRouter, WebSocket, Header, HTTPException
-from starlette.websockets import WebSocketDisconnect
-from pydantic import BaseModel, ValidationError
-from fastapi import Depends
+from fastapi import APIRouter
+from fastapi import HTTPException
+from fastapi import WebSocket
 import jwt
+from pydantic import BaseModel
+from pydantic import ValidationError
+from starlette.websockets import WebSocketDisconnect
+
 from app.core.config import settings
 
 router = APIRouter()
@@ -17,6 +18,7 @@ messages = []
 class Message(BaseModel):
     message: str
     to_user: int
+
 
 def get_jwt_payload(token: str) -> dict | str:
     """
@@ -56,7 +58,7 @@ async def chat(socket: WebSocket):
             if socket_to_send:
                 socket_to_send = list(socket_to_send)[0][0]
                 await socket_to_send.send_json({"from": payload["sub"],
-                                          "message": data.message})
+                                                "message": data.message})
             else:
                 messages.append((payload["sub"], data.message, data.to_user))
     except WebSocketDisconnect:

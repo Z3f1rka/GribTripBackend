@@ -1,7 +1,12 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api import *
+from app.api import admin_router
+from app.api import chat_router
+from app.api import comment_router
+from app.api import history_router
+from app.api import route_router
+from app.api import user_router
 
 
 # TODO: настроить нормально CORS
