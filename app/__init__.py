@@ -1,11 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api import admin_router
-from app.api import comment_router
-from app.api import history_router
-from app.api import route_router
-from app.api import user_router
+from app.api import *
 
 
 # TODO: настроить нормально CORS
@@ -24,4 +20,5 @@ def create_app() -> FastAPI:
     app.include_router(admin_router)
     app.include_router(comment_router)
     app.include_router(history_router)
+    app.include_router(chat_router)
     return app
