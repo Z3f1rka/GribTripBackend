@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api import admin_router
+from app.api import chat_router
 from app.api import comment_router
 from app.api import history_router
 from app.api import route_router
@@ -24,4 +25,5 @@ def create_app() -> FastAPI:
     app.include_router(admin_router)
     app.include_router(comment_router)
     app.include_router(history_router)
+    app.include_router(chat_router)
     return app
