@@ -4,3 +4,4 @@ from .comment_service import CommentService
 from .history_service import HistoryService
 from .route_service import RouteService
 from .user_service import UserService
+from .chat_service import ChatService

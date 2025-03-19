@@ -4,6 +4,7 @@ from abc import abstractmethod
 from app.db.database import async_session_maker
 from app.repositories import AdminRepo
 from app.repositories import CommentRepository
+from app.repositories import ChatRepository
 from app.repositories import RouteRepository
 from app.repositories import SessionRepository
 from app.repositories import UserRepository
@@ -15,6 +16,7 @@ class IUnitOfWork(ABC):
     routes: RouteRepository
     admins: AdminRepo
     comments: CommentRepository
+    chats:
 
     @abstractmethod
     def __init__(self):
@@ -49,6 +51,7 @@ class UnitOfWork(IUnitOfWork):
         self.routes = RouteRepository(self.session)
         self.admins = AdminRepo(self.session)
         self.comments = CommentRepository(self.session)
+        self.chats = ChatRepository(self.session)
 
     async def __aexit__(self, *args):
         await self.rollback()

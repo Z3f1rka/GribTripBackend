@@ -45,6 +45,11 @@ class Repository(AbstractRepository):
         res = res.scalar_one()
         return res
 
+    async def find_all_by(self, **filter_by):
+        res = await self.session.execute(select(self.model).filter_by(**filter_by))
+        res = res.scalars().all()
+        return res
+
     async def del_one(self, **filter_by):
         stmt = delete(self.model).where(self.model.id == filter_by["id"]).returning(self.model)
         res = await self.session.execute(stmt)

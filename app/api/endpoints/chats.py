@@ -35,10 +35,10 @@ def get_jwt_payload(token: str) -> dict | str:
     except jwt.InvalidTokenError:
         raise HTTPException(401, "Invalid bearer token")
 
-
+# TODO: Сделать сохранение, и выгрузку чата из db
 @router.websocket("/chat")
 async def chat(socket: WebSocket):
-    payload = get_jwt_payload(socket.headers.get("jwt_access").split("$")[1])
+    payload = get_jwt_payload(socket.headers.get("Authorization").split("$")[1])
     await socket.accept()
     connections.append((socket, payload["sub"]))
     to_send = filter(lambda x: int(x[2]) == int(payload["sub"]), messages)

@@ -4,3 +4,4 @@ from .comment_repo import CommentRepository
 from .route_repo import RouteRepository
 from .session_repo import SessionRepository
 from .user_repo import UserRepository
+from .chat_repo import ChatRepository
