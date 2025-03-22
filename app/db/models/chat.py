@@ -1,10 +1,12 @@
 from datetime import datetime
+from typing import List
 
 from sqlalchemy import BigInteger
 from sqlalchemy import Boolean
 from sqlalchemy import DateTime
 from sqlalchemy import ForeignKey
 from sqlalchemy import Integer
+from sqlalchemy.dialects import postgresql
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
@@ -14,7 +16,7 @@ from app.db.database import Base
 
 
 class Message(Base):
-    __tablename__ = "comments"
+    __tablename__ = "message"
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, index=True)
     text: Mapped[str] = mapped_column(String, nullable=True)

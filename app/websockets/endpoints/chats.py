@@ -1,6 +1,8 @@
 from fastapi import APIRouter
 from fastapi import HTTPException
 from fastapi import WebSocket
+from app.services import ChatService
+from app.utils import UnitOfWork
 import jwt
 from pydantic import BaseModel
 from pydantic import ValidationError
@@ -18,6 +20,7 @@ messages = []
 class Message(BaseModel):
     message: str
     to_user: int
+    files: list | None = None
 
 
 def get_jwt_payload(token: str) -> dict | str:
@@ -41,15 +44,16 @@ async def chat(socket: WebSocket):
     payload = get_jwt_payload(socket.headers.get("Authorization").split("$")[1])
     await socket.accept()
     connections.append((socket, payload["sub"]))
-    to_send = filter(lambda x: int(x[2]) == int(payload["sub"]), messages)
+    db = ChatService(UnitOfWork())
+    to_send = await db.get_all_to_user(int(payload["sub"]))
     for i in to_send:
-        await socket.send_json({"from": i[0],
-                                "message": i[1]})
+        await socket.send_json({"from": i.from_user,
+                                "message": i.text})
     try:
         while True:
-            data = None
             try:
                 data = Message(**(await socket.receive_json()))
+                await db.save_message(int(payload["sub"]), to_user=data.to_user, message=data.message, files=data.files)
             except ValidationError:
                 error = {}
                 await socket.send_json(error)

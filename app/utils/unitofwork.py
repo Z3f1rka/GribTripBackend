@@ -16,7 +16,7 @@ class IUnitOfWork(ABC):
     routes: RouteRepository
     admins: AdminRepo
     comments: CommentRepository
-    chats:
+    chats: ChatRepository
 
     @abstractmethod
     def __init__(self):
