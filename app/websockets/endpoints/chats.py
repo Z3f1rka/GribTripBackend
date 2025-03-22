@@ -1,14 +1,14 @@
 from fastapi import APIRouter
 from fastapi import HTTPException
 from fastapi import WebSocket
-from app.services import ChatService
-from app.utils import UnitOfWork
 import jwt
 from pydantic import BaseModel
 from pydantic import ValidationError
 from starlette.websockets import WebSocketDisconnect
 
 from app.core.config import settings
+from app.services import ChatService
+from app.utils import UnitOfWork
 
 router = APIRouter()
 # (socket, user_id)
@@ -37,6 +37,7 @@ def get_jwt_payload(token: str) -> dict | str:
         raise HTTPException(401, "Bearer token expired")
     except jwt.InvalidTokenError:
         raise HTTPException(401, "Invalid bearer token")
+
 
 # TODO: Сделать сохранение, и выгрузку чата из db
 @router.websocket("/chat")

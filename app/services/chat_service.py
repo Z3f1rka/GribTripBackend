@@ -1,9 +1,3 @@
-from fastapi import HTTPException
-from sqlalchemy.exc import NoResultFound
-
-from app.api.schemas import AllRouteReturn
-from app.api.schemas import CommentCreateParametrs
-from app.api.schemas import RouteReturn
 from app.utils.unitofwork import IUnitOfWork
 
 
